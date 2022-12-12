@@ -1,6 +1,12 @@
 const express = require('express');
 let router = express.Router();
-const userController = require('../controllers/users.controller');
+const {
+    body,
+    validationResult
+} = require("express-validator");
+
+const usersController = require("../controllers/users.controller");
+
 // middleware for all routes related with tutorials
 router.use((req, res, next) => {
     const start = Date.now();
@@ -9,12 +15,44 @@ router.use((req, res, next) => {
         console.log(`${req.method} ${req.originalUrl} completed in ${diffSeconds} seconds`);
     });
     next()
-})
+});
 
-router.get('/', userController.findAll);
+router.post("/register", [
+    body("username").trim().notEmpty().withMessage("Insira um username!"),
+    body("password").trim().notEmpty().withMessage("Insira uma password!"),
+    body("full_name").trim().notEmpty().withMessage("Insira o seu nome!"),
+    body("email").trim().notEmpty().withMessage("Insira um email!").isEmail().withMessage("Insira um email válido!"),
+], function (req, res) {
+    const errors = validationResult(req);
+    if (errors.isEmpty()) {
+        usersController.register(req, res);
+    } else {
+        return res.status(400).json({
+            errors: errors.array()
+        })
+    }
+});
+
+router.post("/login", [
+    body("username").trim().notEmpty().withMessage("Insira um username!"),
+    body("password").trim().notEmpty().withMessage("Insira uma password!"),
+], function (req, res) {
+    const errors = validationResult(req);
+    if (errors.isEmpty()) {
+        usersController.login(req, res);
+    } else {
+        return res.status(400).json({
+            errors: errors.array()
+        })
+    }
+});
+
 //send a predefined error message for invalid routes on TUTORIALS
 router.all('*', function (req, res) {
-    res.status(404).json({ message: 'Users: what???' });
-})
+    res.status(404).json({
+        message: 'Users: what???'
+    });
+});
+
 // EXPORT ROUTES (required by APP)
 module.exports = router;
