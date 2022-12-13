@@ -55,7 +55,7 @@ db.categories.hasMany(db.books); // if category is deleted, delete all books ass
 db.books.belongsTo(db.categories);
 
 //define the relationship 1:N between Books and Books_Module
-db.books.hasMany(db.book_modules); // if book is deleted, delete all modules associated with it
+db.books.hasMany(db.book_modules, { onDelete: 'CASCADE' }); // if book is deleted, delete all modules associated with it
 db.book_modules.belongsTo(db.books);
 
 //define the relationship 1:N between Books_Module and Activity

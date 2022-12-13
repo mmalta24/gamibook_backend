@@ -1,8 +1,10 @@
 const express = require('express');
 let router = express.Router();
-const {body, validationResult} = require("express-validator");
+const {body, validationResult, param} = require("express-validator");
 const {verifyToken} = require("../controllers/auth.controller")
 const booksController = require("../controllers/books.controller");
+const modulesController = require("../controllers/book_modules.controller");
+const modulesRouter = require("../routes/book_modules.routes");
 
 // middleware for all routes related with tutorials
 router.use((req, res, next) => {
@@ -31,6 +33,8 @@ router.post("/create", [
     }
 });
 
+
+router.use('/:bookID/modules', modulesRouter)
 
 router.route("/:id")
     .get(verifyToken, booksController.findOne)
