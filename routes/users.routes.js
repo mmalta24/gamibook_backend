@@ -4,7 +4,9 @@ const {
     body,
     validationResult
 } = require("express-validator");
-
+const {
+    verifyToken
+} = require("../controllers/auth.controller")
 const usersController = require("../controllers/users.controller");
 
 // middleware for all routes related with tutorials
@@ -46,6 +48,8 @@ router.post("/login", [
         })
     }
 });
+
+router.route("/me").get(verifyToken, usersController.getUser);
 
 //send a predefined error message for invalid routes on TUTORIALS
 router.all('*', function (req, res) {

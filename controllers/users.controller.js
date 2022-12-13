@@ -94,3 +94,22 @@ exports.login = async (req, res) => {
         });
     }
 };
+
+exports.getUser = async (req, res) => {
+    try {
+        let user = await User.findByPk(req.userId, {
+            attributes: {
+                exclude: ['password']
+            }
+        });
+        return res.status(200).json({
+            success: true,
+            user
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            msg: err.message || "Ocorreu um erro a recolher a informação. Tente novamente!"
+        });
+    }
+};

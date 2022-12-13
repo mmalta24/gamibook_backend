@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const config = require("../config");
+const config = require("../config/config");
 
 exports.verifyToken = (req, res, next) => {
     const header = req.headers["x-access-token"] || req.headers.authorization;
@@ -10,6 +10,7 @@ exports.verifyToken = (req, res, next) => {
         });
     const bearer = header.split(" "); // Authorization: Bearer <token>
     const token = bearer[1];
+    console.log(token);
     try {
         let decoded = jwt.verify(token, config.SECRET);
         req.userId = decoded.userId;
