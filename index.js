@@ -9,6 +9,8 @@ app.use(express.json()); //enable parsing JSON body data
 
 // routing middleware for resource TUTORIALS
 app.use('/users', require('./routes/users.routes.js'))
+app.use('/books', require('./routes/books.routes.js'))
+app.use('/categories', require('./routes/categories.routes.js'))
 
 // handle invalid routes
 app.get('*', function (req, res) {

@@ -6,14 +6,14 @@ module.exports = (sequelize, DataTypes) => {
             notEmpty: true,
             unique: {
                 args: true,
-                msg: "Nome do livro já existe!"
+                msg: "Book name already exists!"
             },
             validate: {
                 notNull: {
-                    msg: "Nome do livro não pode estar vazio!"
+                    msg: "Book name cannot be empty!"
                 },
                 notEmpty: {
-                    msg: "Nome do livro não pode estar vazio!"
+                    msg: "Book name cannot be empty!"
                 },
             }
         },
@@ -23,10 +23,10 @@ module.exports = (sequelize, DataTypes) => {
             notEmpty: true,
             validate: {
                 notNull: {
-                    msg: "Capa do livro não pode estar vazia!"
+                    msg: "Book cover cannot be empty!"
                 },
                 notEmpty: {
-                    msg: "Capa do livro não pode estar vazia!"
+                    msg: "Book cover cannot be empty!"
                 },
             }
         },
@@ -36,10 +36,23 @@ module.exports = (sequelize, DataTypes) => {
             notEmpty: true,
             validate: {
                 notNull: {
-                    msg: "Imagem de fundo não pode estar vazio!"
+                    msg: "Background image cannot be empty!"
                 },
                 notEmpty: {
-                    msg: "Imagem de fundo não pode estar vazio!"
+                    msg: "Background image cannot be empty!"
+                },
+            }
+        },
+        CategoryId:{
+            type: DataTypes.NUMBER,
+            allowNull: false,
+            notEmpty: true,
+            validate: {
+                notNull: {
+                    msg: "Category id cannot be empty!"
+                },
+                notEmpty: {
+                    msg: "Category id cannot be empty!"
                 },
             }
         }
