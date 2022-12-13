@@ -85,7 +85,8 @@ exports.login = async (req, res) => {
         }, config.SECRET, {}); // token that doesn't expires
         return res.status(200).json({
             success: true,
-            accessToken: token
+            accessToken: token,
+            user_type: user.type_user
         });
     } catch (err) {
         return res.status(500).json({
