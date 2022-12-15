@@ -61,29 +61,29 @@ exports.delete = async (req, res) => {
                 success: false, msg: `Cannot find any book with ID ${req.params.bookID}.`
             });
 
-        let moduleBook = await Module.findByPk(req.params.idModule)
+        let moduleBook = await Module.findByPk(req.params.moduleID)
         if (moduleBook === null)
             return res.status(404).json({
-                success: false, msg: `Cannot find any module with ID ${req.params.idModule}.`
+                success: false, msg: `Cannot find any module with ID ${req.params.moduleID}.`
             });
 
 
-        let result = await Module.destroy({ where: { id: req.params.idModule } })
+        let result = await Module.destroy({ where: { id: req.params.moduleID } })
         // console.log(result)
 
         if (result == 1) // the promise returns the number of deleted rows
             return res.status(200).json({
-                success: true, msg: `Module with id ${req.params.idModule} was successfully deleted!`
+                success: true, msg: `Module with id ${req.params.moduleID} was successfully deleted!`
             });
         // no rows deleted -> no book was found
         res.status(404).json({
-            success: false, msg: `Cannot find any book module with ID ${req.params.idModule}.`
+            success: false, msg: `Cannot find any book module with ID ${req.params.moduleID}.`
         });
     }
     catch (err) {
         console.log(err)
         res.status(500).json({
-            success: false, msg: `Error deleting book module with ID ${req.params.idModule}.`
+            success: false, msg: `Error deleting book module with ID ${req.params.moduleID}.`
         });
     };
 };
@@ -97,10 +97,10 @@ exports.update = async (req, res) => {
                 success: false, msg: `Cannot find any book with ID ${req.params.bookID}.`
             });
 
-        let moduleBook = await Module.findByPk(req.params.idModule)
+        let moduleBook = await Module.findByPk(req.params.moduleID)
         if (moduleBook === null)
             return res.status(404).json({
-                success: false, msg: `Cannot find any module with ID ${req.params.idModule}.`
+                success: false, msg: `Cannot find any module with ID ${req.params.moduleID}.`
             });
 
         if (!req.body.moduleName) {
@@ -109,23 +109,23 @@ exports.update = async (req, res) => {
             });
         }
         // obtains only a single entry from the table, using the provided primary key
-        let affectedRows = await Module.update({ module_name: req.body.moduleName }, { where: { id: req.params.idModule } })
+        let affectedRows = await Module.update({ module_name: req.body.moduleName }, { where: { id: req.params.moduleID } })
         console.log(affectedRows)
         if (affectedRows[0] === 0) // check if the book was updated (returns [0] if no data was updated)
             return res.status(200).json({
-                success: true, msg: `No updates were made on module with ID ${req.params.idModule}.`
+                success: true, msg: `No updates were made on module with ID ${req.params.moduleID}.`
             });
 
         res.json({
             success: true,
-            msg: `Module with ID ${req.params.idModule} was updated successfully.`
+            msg: `Module with ID ${req.params.moduleID} was updated successfully.`
         });
     }
     catch (err) {
         if (err instanceof ValidationError)
             return res.status(400).json({ success: false, msg: err.errors.map(e => e.message) });
         res.status(500).json({
-            success: false, msg: `Error retrieving module with ID ${req.params.idModule}.`
+            success: false, msg: `Error retrieving module with ID ${req.params.moduleID}.`
         });
     };
 };

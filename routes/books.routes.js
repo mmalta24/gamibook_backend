@@ -1,9 +1,14 @@
 const express = require('express');
 let router = express.Router();
-const {body, validationResult, param} = require("express-validator");
-const {verifyToken} = require("../controllers/auth.controller")
+const {
+    body,
+    validationResult,
+    param
+} = require("express-validator");
+const {
+    verifyToken
+} = require("../controllers/auth.controller")
 const booksController = require("../controllers/books.controller");
-const modulesController = require("../controllers/book_modules.controller");
 const modulesRouter = require("../routes/book_modules.routes");
 
 // middleware for all routes related with tutorials
@@ -16,36 +21,69 @@ router.use((req, res, next) => {
     next()
 });
 
+// CREATE BOOK
 router.post("/create", [
+    body("id").trim().notEmpty().withMessage("Insert the book id!"),
     body("name").trim().notEmpty().withMessage("Insert the book name!"),
     body("img_book").trim().notEmpty().withMessage("Insert the book image!"),
     body("img_background").trim().notEmpty().withMessage("Insert the background image!"),
-    body("id").trim().notEmpty().withMessage("Insert the book id!"),
     body("CategoryId").trim().notEmpty().withMessage("Insert the category id!"),
 ], function (req, res) {
     const errors = validationResult(req);
-    if (errors.isEmpty()) {
-        booksController.create(req, res);
+    if (!errors.isEmpty()) {
+        return res.json({ errors: errors.array() })
     } else {
-        return res.status(400).json({
-            errors: errors.array()
-        })
+        next()
     }
-});
+}, verifyToken, booksController.create);
 
 
 router.use('/:bookID/modules', modulesRouter)
 
-router.route("/:id")
-    .get(verifyToken, booksController.findOne)
-    .delete(verifyToken, booksController.delete)
-    .patch(verifyToken, booksController.update);
+// GET BOOK GIVEN IS ID
+router.get("/:id", [
+    param("id").trim().notEmpty().withMessage("Insert the book id!").isNumeric(),
+], function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.json({ errors: errors.array() })
+    } else {
+        next()
+    }
+}, verifyToken, booksController.findOne);
+
+// UPDATE BOOK GIVEN IS ID
+router.patch("/:id", [
+    param("id").trim().notEmpty().withMessage("Insert the book id!").isNumeric(),
+], function (req, res, next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.json({ errors: errors.array() })
+    } else {
+        next()
+    }
+}, verifyToken, booksController.update);
+
+
+// DELETE BOOK GIVEN IS ID
+router.delete("/:id", [
+    param("id").trim().notEmpty().withMessage("Insert the book id!").isNumeric(),
+], function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.json({ errors: errors.array() })
+    } else {
+        next()
+    }
+}, verifyToken, booksController.update);
+
+// GET ALL BOOKS
 router.route("/").get(booksController.findAll);
 
 //send a predefined error message for invalid routes on BOOKS
 router.all('*', function (req, res) {
     res.status(404).json({
-        message: 'Books: what???'
+        message: 'BOOKS: what???'
     });
 });
 

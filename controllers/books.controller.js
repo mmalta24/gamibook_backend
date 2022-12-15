@@ -1,7 +1,3 @@
-const jwt = require("jsonwebtoken"); //JWT tokens creation (sign())
-const bcrypt = require("bcryptjs"); //password encryption
-const config = require("../config/config.js");
-const {Op} = require("sequelize");
 const db = require("../models");
 const Book = db.books;
 
@@ -9,7 +5,7 @@ exports.create = async (req, res) => {
     try {
         let book = await Book.findOne({
             where: {
-                name: req.body.name
+                id: req.body.id
             }
         }); //get book data from DB
         if (book) return res.status(400).json({
@@ -27,9 +23,10 @@ exports.create = async (req, res) => {
         return res.status(201).json({
             success: true,
             msg: "Book was created successfully!",
-            uri: `books/${req.body.name}`
+            uri: `books/${req.body.id}`
         });
     } catch (err) {
+        console.log(err);
         if (err instanceof ValidationError)
         res.status(400).json({
             success: false,

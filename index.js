@@ -11,6 +11,7 @@ app.use(express.json()); //enable parsing JSON body data
 app.use('/users', require('./routes/users.routes.js'))
 app.use('/books', require('./routes/books.routes.js'))
 app.use('/categories', require('./routes/categories.routes.js'))
+app.use('/activityTypes', require('./routes/activity_type.routes.js'))
 app.use('/achievements', require('./routes/achievements.routes.js'))
 
 // handle invalid routes
