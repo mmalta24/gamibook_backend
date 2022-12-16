@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
             }
         },
-        correct_answer: {
+        correctAnswer: {
             type: DataTypes.STRING,
             allowNull: false,
             notEmpty: true,
@@ -61,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
             }
         },
-        img_background: {
+        imgBackground: {
             type: DataTypes.STRING,
             allowNull: false,
             notEmpty: true,

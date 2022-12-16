@@ -2,6 +2,9 @@ const jwt = require("jsonwebtoken"); //JWT tokens creation (sign())
 const bcrypt = require("bcryptjs"); //password encryption
 const config = require("../config/config.js");
 const {
+    generateDate
+} = require("../utilities/index.js");
+const {
     Op
 } = require("sequelize");
 const db = require("../models");
@@ -12,7 +15,7 @@ exports.register = async (req, res) => {
         const newUser = {
             username: req.body.username.trim(),
             password: req.body.password.trim(),
-            full_name: req.body.full_name.trim(),
+            fullName: req.body.fullName.trim(),
             email: req.body.email.trim(),
         };
 
@@ -33,7 +36,7 @@ exports.register = async (req, res) => {
             });
         }
 
-        const userCreated = await User.create({
+        await User.create({
             ...newUser,
             password: bcrypt.hashSync(req.body.password, 10)
         });
@@ -79,14 +82,23 @@ exports.login = async (req, res) => {
             });
         }
 
+        await User.update({
+            lastTimeLogged: generateDate()
+        }, {
+            where: {
+                id: user.id
+            }
+        });
+
         // sign the given payload (user ID) into a JWT payload – builds JWT token, using secret key
         const token = jwt.sign({
-            userId: user.id
+            userId: user.id,
+            typeUser: user.typeUser
         }, config.SECRET, {}); // token that doesn't expires
         return res.status(200).json({
             success: true,
             accessToken: token,
-            user_type: user.type_user
+            typeUser: user.typeUser
         });
     } catch (err) {
         return res.status(500).json({
@@ -103,6 +115,14 @@ exports.getUser = async (req, res) => {
                 exclude: ['password']
             }
         });
+        // update log when user opens app
+        await User.update({
+            lastTimeLogged: generateDate()
+        }, {
+            where: {
+                id: req.userId
+            }
+        });
         return res.status(200).json({
             success: true,
             user
@@ -114,3 +134,34 @@ exports.getUser = async (req, res) => {
         });
     }
 };
+
+exports.updateUser = async (req, res) => {
+    try {
+        if (req.body.password) {
+            await User.update({
+                password: bcrypt.hashSync(req.body.password, 10)
+            }, {
+                where: {
+                    id: req.userId
+                }
+            });
+        } else {
+            await User.update({
+                avatar: req.body.avatar
+            }, {
+                where: {
+                    id: req.userId
+                }
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            msg: "Campo atualizado!"
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            msg: err.message || "Ocorreu um erro a recolher a informação. Tente novamente!"
+        });
+    }
+}

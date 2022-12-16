@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
             }
         },
-        points_needed: {
+        pointsNeeded: {
             type: DataTypes.INTEGER,
             allowNull: false,
             validate: {

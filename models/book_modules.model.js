@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     const Module = sequelize.define("Book_Modules", {
-        module_name: {
+        moduleName: {
             type: DataTypes.STRING,
             allowNull: false,
             notEmpty: true,

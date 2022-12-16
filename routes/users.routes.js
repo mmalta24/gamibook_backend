@@ -2,7 +2,8 @@ const express = require('express');
 let router = express.Router();
 const {
     body,
-    validationResult
+    validationResult,
+    oneOf,
 } = require("express-validator");
 const {
     verifyToken
@@ -22,7 +23,7 @@ router.use((req, res, next) => {
 router.post("/register", [
     body("username").trim().notEmpty().withMessage("Insira um username!"),
     body("password").trim().notEmpty().withMessage("Insira uma password!"),
-    body("full_name").trim().notEmpty().withMessage("Insira o seu nome!"),
+    body("fullName").trim().notEmpty().withMessage("Insira o seu nome!"),
     body("email").trim().notEmpty().withMessage("Insira um email!").isEmail().withMessage("Insira um email válido!"),
 ], function (req, res) {
     const errors = validationResult(req);
@@ -49,14 +50,38 @@ router.post("/login", [
     }
 });
 
-router.route("/me").get(verifyToken, usersController.getUser);
+router.route("/me")
+    .get(verifyToken, usersController.getUser)
+    .patch([oneOf( // one of the following must exist
+            [
+                body("password").trim().notEmpty().withMessage("Insira um password!"),
+                body("avatar").trim().notEmpty().withMessage("Insira um avatar!"),
+            ],
+        )], function (req, res, next) {
+            const errors = validationResult(req);
+            if (errors.isEmpty()) {
+                next();
+            } else {
+                return res.status(400).json({
+                    errors: errors.array()
+                });
+            }
+        },
+        verifyToken, usersController.updateUser);
 
-//send a predefined error message for invalid routes on TUTORIALS
+/*
+router.route("/me/achievements").get(verifyToken, usersController.getUserAchievements);
+router.route("/me/notifications").get(verifyToken, usersController.getUserNotifications);
+router.route("/me/notifications/:notificationId").get(verifyToken, usersController.deleteNotification);
+router.route("/me/books").get(verifyToken, usersController.getUserBooks).post(verifyToken, usersController.addBook);
+router.route("/me/books/:bookId").delete(verifyToken, usersController.deleteBook);
+ */
+
+//send a predefined error message for invalid routes
 router.all('*', function (req, res) {
     res.status(404).json({
         message: 'Users: what???'
     });
 });
 
-// EXPORT ROUTES (required by APP)
 module.exports = router;

@@ -1,3 +1,6 @@
+const db = require("./index.js");
+const Category = db.categories;
+
 module.exports = (sequelize, DataTypes) => {
     const Book = sequelize.define("Books", {
         name: {
@@ -17,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
             }
         },
-        img_book: {
+        imgBook: {
             type: DataTypes.STRING,
             allowNull: false,
             notEmpty: true,
@@ -30,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
             }
         },
-        img_background: {
+        imgBackground: {
             type: DataTypes.STRING,
             allowNull: false,
             notEmpty: true,
@@ -43,19 +46,6 @@ module.exports = (sequelize, DataTypes) => {
                 },
             }
         },
-        CategoryId:{
-            type: DataTypes.NUMBER,
-            allowNull: false,
-            notEmpty: true,
-            validate: {
-                notNull: {
-                    msg: "Category id cannot be empty!"
-                },
-                notEmpty: {
-                    msg: "Category id cannot be empty!"
-                },
-            }
-        }
     }, {
         timestamps: false
     });

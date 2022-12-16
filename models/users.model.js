@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define("Users", {
-        full_name: {
+        fullName: {
             type: DataTypes.STRING,
             allowNull: false,
             notEmpty: true,
@@ -59,10 +59,6 @@ module.exports = (sequelize, DataTypes) => {
                 },
             }
         },
-        did_onboarding: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: true,
-        },
         tickets: {
             type: DataTypes.INTEGER,
             defaultValue: 0,
@@ -72,11 +68,20 @@ module.exports = (sequelize, DataTypes) => {
                 },
             }
         },
-        total_points: {
+        totalPoints: {
             type: DataTypes.INTEGER,
             defaultValue: 0
         },
-        last_ranking: {
+        currentRanking: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            validate: {
+                isInt: {
+                    msg: "O ranking atual precisa de ser inteiro!"
+                }
+            }
+        },
+        lastRanking: {
             type: DataTypes.INTEGER,
             allowNull: true,
             validate: {
@@ -85,22 +90,25 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
-        type_user: {
-            type: DataTypes.ENUM("normal", "admin"),
+        typeUser: {
+            type: DataTypes.ENUM("regular", "admin"),
             allowNull: false,
-            defaultValue: "normal",
+            defaultValue: "regular",
             validate: {
                 isIn: {
                     args: [
-                        ["normal", "admin"]
+                        ["regular", "admin"]
                     ],
-                    msg: "O utilizador só pode ser normal ou administrador!"
+                    msg: "O utilizador só pode ser regular ou administrador!"
                 }
             }
         },
         avatar: {
             type: DataTypes.STRING,
             allowNull: true,
+        },
+        lastTimeLogged: {
+            type: DataTypes.STRING,
         }
     }, {
         timestamps: false

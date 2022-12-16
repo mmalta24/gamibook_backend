@@ -10,10 +10,10 @@ exports.verifyToken = (req, res, next) => {
         });
     const bearer = header.split(" "); // Authorization: Bearer <token>
     const token = bearer[1];
-    console.log(token);
     try {
         let decoded = jwt.verify(token, config.SECRET);
         req.userId = decoded.userId;
+        req.typeUser = decoded.typeUser;
         next();
     } catch (err) {
         return res.status(401).json({

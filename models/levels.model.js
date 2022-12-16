@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     const Level = sequelize.define("Levels", {
-        level_nr: {
+        levelNumber: {
             type: DataTypes.INTEGER,
             allowNull: false,
             notEmpty: true,
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
             }
         },
-        profile_image: {
+        profileImage: {
             type: DataTypes.STRING,
             allowNull: false,
             notEmpty: true,

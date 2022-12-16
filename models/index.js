@@ -28,17 +28,17 @@ const db = {}; //object to be exported
 db.sequelize = sequelize; //save the Sequelize instance (actual connection pool)
 
 //save the models defined within the API
-db.users = require("./users.model.js")(sequelize, DataTypes);
 db.levels = require("./levels.model.js")(sequelize, DataTypes);
+db.users = require("./users.model.js")(sequelize, DataTypes);
 db.categories = require("./categories.model.js")(sequelize, DataTypes);
 db.books = require("./books.model.js")(sequelize, DataTypes);
 db.book_modules = require("./book_modules.model.js")(sequelize, DataTypes);
-db.activity = require("./activity.model.js")(sequelize, DataTypes);
 db.activity_type = require("./activity_type.model.js")(sequelize, DataTypes);
+db.activity = require("./activity.model.js")(sequelize, DataTypes);
 db.achievements = require("./achievements.model.js")(sequelize, DataTypes);
 db.notifications = require("./notifications.model.js")(sequelize, DataTypes);
-db.user_books = require("./user_books.model.js")(sequelize, DataTypes)
-db.user_history = require("./user_history.model.js")(sequelize, DataTypes)
+db.user_books = require("./user_books.model.js")(sequelize, DataTypes);
+db.user_history = require("./user_history.model.js")(sequelize, DataTypes);
 
 //define the relationship N:M between Users and Books models
 db.users.belongsToMany(db.books, {
