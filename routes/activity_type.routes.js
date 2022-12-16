@@ -2,7 +2,8 @@ const express = require('express');
 let router = express.Router();
 const {body, validationResult, param} = require("express-validator");
 const {verifyToken} = require("../controllers/auth.controller")
-const categoriesController = require("../controllers/categories.controller");
+const activityTypeController = require("../controllers/activity_type.controller");
+
 
 // middleware for all routes related with tutorials
 router.use((req, res, next) => {
@@ -14,8 +15,8 @@ router.use((req, res, next) => {
     next()
 });
 
-router.post("/create", [
-    body("name").trim().notEmpty().withMessage("Insert the book name!"),
+router.post("/", [
+    body("name").trim().notEmpty().withMessage("Insert the activity type name!"),
 ], function (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -23,19 +24,11 @@ router.post("/create", [
     } else {
         next()
     }
-}, verifyToken, categoriesController.create);
+}, verifyToken, activityTypeController.create);
 
-router.patch("/:id", [
-    body("name").trim().notEmpty().withMessage("Insert the book name!"),
-    param("id").trim().notEmpty().withMessage("Insert the id!").isNumeric().withMessage("Insert an id!"),
-], function (req, res) {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.json({ errors: errors.array() })
-    } else {
-        next()
-    }
-}, verifyToken, categoriesController.update);
+
+router.route("/").get(activityTypeController.findAll);
+
 
 router.delete("/:id", [
     param("id").trim().notEmpty().withMessage("Insert the id!").isNumeric().withMessage("Insert an id!"),
@@ -46,15 +39,12 @@ router.delete("/:id", [
     } else {
         next()
     }
-}, verifyToken, categoriesController.delete);
-
-
-router.route("/").get(categoriesController.findAll);
+}, verifyToken, activityTypeController.delete);
 
 //send a predefined error message for invalid routes on BOOKS
 router.all('*', function (req, res) {
     res.status(404).json({
-        message: 'CATEGORIES: what???'
+        message: 'ActivityTypes: what???'
     });
 });
 
