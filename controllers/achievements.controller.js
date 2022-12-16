@@ -92,6 +92,10 @@ exports.updateAchievement = async (req, res) => {
             }
         });
 
+        if(newData==={}){
+            return res.status(400).json({success:false,msg:"You don't have data to update achievement!"})
+        }
+
         // update only a single entry from the table, using the provided primary key
         let affectedRows = await Achievements.update(newData, { where: { id: req.params.idAchievement } })
 
