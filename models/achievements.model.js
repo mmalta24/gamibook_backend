@@ -10,11 +10,11 @@ module.exports = (sequelize, DataTypes) => {
             },
             validate: {
                 notNull: {
-                    msg: "Nome não pode estar vazio!"
+                    msg: "Nome da conquista não pode estar vazio!"
                 },
                 notEmpty: {
-                    msg: "Nome não pode estar vazio!"
-                },
+                    msg: "Nome da conquista não pode estar vazio!"
+                }
             }
         },
         description: {
@@ -23,11 +23,11 @@ module.exports = (sequelize, DataTypes) => {
             notEmpty: true,
             validate: {
                 notNull: {
-                    msg: "Descrição não pode estar vazia!"
+                    msg: "Descrição da conquista não pode estar vazia!"
                 },
                 notEmpty: {
-                    msg: "Descrição não pode estar vazia!"
-                },
+                    msg: "Descrição da conquista não pode estar vazia!"
+                }
             }
         },
         pointsNeeded: {
@@ -35,8 +35,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             validate: {
                 isInt: {
-                    msg: "O número de pontos precisa de ser inteiro!"
-                },
+                    msg: "O número de pontos da conquista precisa de ser inteiro!"
+                }
             }
         },
         img: {
@@ -45,11 +45,11 @@ module.exports = (sequelize, DataTypes) => {
             notEmpty: true,
             validate: {
                 notNull: {
-                    msg: "Imagem não pode estar vazia!"
+                    msg: "Imagem da conquista não pode estar vazia!"
                 },
                 notEmpty: {
-                    msg: "Imagem não pode estar vazia!"
-                },
+                    msg: "Imagem da conquista não pode estar vazia!"
+                }
             }
         }
     }, {

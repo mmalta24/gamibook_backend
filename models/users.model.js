@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 notEmpty: {
                     msg: "Username não pode estar vazio!"
-                },
+                }
             }
         },
         username: {
@@ -27,10 +27,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 notEmpty: {
                     msg: "Username não pode estar vazio!"
-                },
-                isAlphanumeric: {
-                    msg: "O username só pode conter letras e números!"
-                },
+                }
             }
         },
         email: {
@@ -47,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 isEmail: {
                     msg: "Precisa de seguir o formato de email!"
-                },
+                }
             }
         },
         password: {
@@ -56,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 notNull: {
                     msg: "Password não pode estar vazia!"
-                },
+                }
             }
         },
         tickets: {
@@ -65,21 +62,12 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 isInt: {
                     msg: "O número de pontos precisa de ser inteiro!"
-                },
+                }
             }
         },
         totalPoints: {
             type: DataTypes.INTEGER,
             defaultValue: 0
-        },
-        currentRanking: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            validate: {
-                isInt: {
-                    msg: "O ranking atual precisa de ser inteiro!"
-                }
-            }
         },
         lastRanking: {
             type: DataTypes.INTEGER,

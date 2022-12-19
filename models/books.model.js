@@ -9,15 +9,15 @@ module.exports = (sequelize, DataTypes) => {
             notEmpty: true,
             unique: {
                 args: true,
-                msg: "Book name already exists!"
+                msg: "Nome do livro já existe!"
             },
             validate: {
                 notNull: {
-                    msg: "Book name cannot be empty!"
+                    msg: "Nome do livro não pode estar vazio!"
                 },
                 notEmpty: {
-                    msg: "Book name cannot be empty!"
-                },
+                    msg: "Nome do livro não pode estar vazio!"
+                }
             }
         },
         imgBook: {
@@ -26,11 +26,11 @@ module.exports = (sequelize, DataTypes) => {
             notEmpty: true,
             validate: {
                 notNull: {
-                    msg: "Book cover cannot be empty!"
+                    msg: "Capa do livro não pode estar vazia!"
                 },
                 notEmpty: {
-                    msg: "Book cover cannot be empty!"
-                },
+                    msg: "Capa do livro não pode estar vazia!"
+                }
             }
         },
         imgBackground: {
@@ -39,11 +39,24 @@ module.exports = (sequelize, DataTypes) => {
             notEmpty: true,
             validate: {
                 notNull: {
-                    msg: "Background image cannot be empty!"
+                    msg: "Imagem de fundo não pode estar vazio!"
                 },
                 notEmpty: {
-                    msg: "Background image cannot be empty!"
-                },
+                    msg: "Imagem de fundo não pode estar vazio!"
+                }
+            }
+        },
+        code: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            unique: {
+                args: true,
+                msg: "Código de livro já existe!"
+            },
+            validate: {
+                isInt: {
+                    msg: "O código de livro precisa de ser inteiro!"
+                }
             }
         },
     }, {

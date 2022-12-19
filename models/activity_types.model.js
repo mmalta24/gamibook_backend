@@ -1,20 +1,20 @@
 module.exports = (sequelize, DataTypes) => {
-    const Activity_Type = sequelize.define("Activity_Type", {
+    const Activity_Type = sequelize.define("ActivityTypes", {
         name: {
             type: DataTypes.STRING,
             allowNull: false,
             notEmpty: true,
             unique: {
                 args: true,
-                msg: "Nome da conquista já existe!"
+                msg: "Nome do tipo de atividade já existe!"
             },
             validate: {
                 notNull: {
-                    msg: "Nome não pode estar vazio!"
+                    msg: "Nome do tipo de atividade não pode estar vazio!"
                 },
                 notEmpty: {
-                    msg: "Nome não pode estar vazio!"
-                },
+                    msg: "Nome do tipo de atividade não pode estar vazio!"
+                }
             }
         }
     }, {

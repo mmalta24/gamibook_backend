@@ -8,14 +8,19 @@ app.use(cors()); //enable ALL CORS requests (client requests from other domain)
 app.use(express.json()); //enable parsing JSON body data
 
 // routing middleware for resources
-app.use('/users', require('./routes/users.routes.js'))
-//app.use('/books', require('./routes/books.routes.js'))
-//app.use('/categories', require('./routes/categories.routes.js'))
-//app.use('/activityTypes', require('./routes/activity_type.routes.js'))
-//app.use('/achievements', require('./routes/achievements.routes.js'))
+app.use('/users', require('./routes/users.routes.js'));
+app.use('/achievements', require('./routes/achievements.routes'));
+app.use('/levels', require('./routes/levels.routes'));
+app.use('/categories', require('./routes/categories.routes'));
+app.use('/activityTypes', require('./routes/activitytypes.routes'));
+app.use('/books', require('./routes/books.routes'));
+app.use('/myBooks', require('./routes/user_books.routes'));
 
 // handle invalid routes
 app.get('*', function (req, res) {
-    res.status(404).json({ message: 'WHAT???' });
-})
+    res.status(404).json({
+        message: 'WHAT???'
+    });
+});
+
 app.listen(port, host, () => console.log(`App listening at http://${host}:${port}/`));

@@ -5,59 +5,59 @@ const {
     trimObjectStrings
 } = require("../utilities");
 const db = require("../models");
-const Category = db.categories;
+const ActivityType = db.activity_type;
 
-exports.findAllCategories = async (req, res) => {
+exports.findAllTypes = async (req, res) => {
     if (req.typeUser !== "admin") {
         return res.status(403).json({
             success: false,
-            msg: "O seu tipo de utilizador não tem permissões para ver todas as categorias!",
+            msg: "O seu tipo de utilizador não tem permissões para ver todos os tipos de atividade!",
         });
     }
 
     try {
-        const categories = await Category.findAll();
+        const activityTypes = await ActivityType.findAll();
 
         return res.status(200).json({
             success: true,
-            categories
+            activityTypes
         });
     } catch (err) {
         return res.status(500).json({
             success: false,
-            msg: err.message || "Ocorreu um erro ao obter as categorias. Tente novamente!"
+            msg: err.message || "Ocorreu um erro ao obter os tipos de atividade. Tente novamente!"
         });
     }
 }
 
-exports.createCategory = async (req, res) => {
+exports.createType = async (req, res) => {
     if (req.typeUser !== "admin") {
         return res.status(403).json({
             success: false,
-            msg: "O seu tipo de utilizador não tem permissões para criar categorias!",
+            msg: "O seu tipo de utilizador não tem permissões para criar tipos de atividade!",
         });
     }
 
     try {
-        const category = await Category.findOne({
-            where: {
+        const activityType = await ActivityType.findOne({
+            where: trimObjectStrings({
                 name: req.body.name
-            }
+            })
         });
 
-        if (category) {
+        if (activityType) {
             return res.status(406).json({
                 success: false,
-                msg: "Já existe uma categoria com esse nome!"
+                msg: "Já existe um tipo de atividade com esse nome!"
             });
         }
 
-        const newCategory = await Category.create(trimObjectStrings(req.body));
+        const newType = await ActivityType.create(trimObjectStrings(req.body));
 
         return res.status(201).json({
             success: true,
-            sg: "Categoria criada!",
-            uri: `/categories/${newCategory.id}`
+            msg: "Tipo de atividade criada!",
+            uri: `/activityTypes/${newType.id}`
         });
     } catch (err) {
         if (err instanceof ValidationError) {
@@ -68,40 +68,40 @@ exports.createCategory = async (req, res) => {
         }
         return res.status(500).json({
             success: false,
-            msg: err.message || "Ocorreu um erro ao criar a categoria. Tente novamente!"
+            msg: err.message || "Ocorreu um erro ao criar o tipo de atividade. Tente novamente!"
         });
     }
 }
 
-exports.updateCategory = async (req, res) => {
+exports.updateType = async (req, res) => {
     if (req.typeUser !== "admin") {
         return res.status(403).json({
             success: false,
-            msg: "O seu tipo de utilizador não tem permissões para atualizar categorias!",
+            msg: "O seu tipo de utilizador não tem permissões para atualizar tipos de atividade!",
         });
     }
 
     try {
-        const category = await Category.findByPk(req.params.idCategory);
+        const activityType = await ActivityType.findByPk(req.params.idType);
 
-        if (!category) {
+        if (!activityType) {
             return res.status(404).json({
                 success: false,
-                msg: "Categoria não encontrada!"
+                msg: "Tipo de atividade não encontrada!"
             });
         }
 
-        await Category.update(trimObjectStrings({
+        await ActivityType.update(trimObjectStrings({
             name: req.body.name
         }), {
             where: {
-                id: req.params.idCategory
+                id: req.params.idType
             }
         });
 
         return res.status(200).json({
             success: true,
-            msg: "Categoria atualizada!"
+            msg: "Tipo de atividade atualizada!"
         });
     } catch (err) {
         if (err instanceof ValidationError) {
@@ -112,43 +112,43 @@ exports.updateCategory = async (req, res) => {
         }
         return res.status(500).json({
             success: false,
-            msg: err.message || "Ocorreu um erro ao atualizar a categoria. Tente novamente!"
+            msg: err.message || "Ocorreu um erro ao atualizar o tipo de atividade. Tente novamente!"
         });
     }
 }
 
-exports.deleteCategory = async (req, res) => {
+exports.deleteType = async (req, res) => {
     if (req.typeUser !== "admin") {
         return res.status(403).json({
             success: false,
-            msg: "O seu tipo de utilizador não tem permissões para apagar categorias!",
+            msg: "O seu tipo de utilizador não tem permissões para apagar tipos de atividade!",
         });
     }
 
     try {
-        const category = await Category.findByPk(req.params.idCategory);
+        const activityType = await ActivityType.findByPk(req.params.idType);
 
-        if (!category) {
+        if (!activityType) {
             return res.status(404).json({
                 success: false,
-                msg: "Categoria não encontrada!"
+                msg: "Tipo de atividade não encontrada!"
             });
         }
 
-        await category.destroy({
+        await ActivityType.destroy({
             where: {
-                id: req.params.idCategory
+                id: req.params.idType
             }
         });
 
         return res.status(200).json({
             success: true,
-            msg: "Categoria apagada!"
+            msg: "Tipo de atividade apagada!"
         });
     } catch (err) {
         return res.status(500).json({
             success: false,
-            msg: err.message || "Ocorreu um erro ao apagar a categoria. Tente novamente!"
+            msg: err.message || "Ocorreu um erro ao apagar o tipo de atividade. Tente novamente!"
         });
     }
 }

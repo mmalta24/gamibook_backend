@@ -33,8 +33,8 @@ db.users = require("./users.model.js")(sequelize, DataTypes);
 db.categories = require("./categories.model.js")(sequelize, DataTypes);
 db.books = require("./books.model.js")(sequelize, DataTypes);
 db.book_modules = require("./book_modules.model.js")(sequelize, DataTypes);
-db.activity_type = require("./activity_type.model.js")(sequelize, DataTypes);
-db.activity = require("./activity.model.js")(sequelize, DataTypes);
+db.activity_type = require("./activity_types.model.js")(sequelize, DataTypes);
+db.activity = require("./activities.model.js")(sequelize, DataTypes);
 db.achievements = require("./achievements.model.js")(sequelize, DataTypes);
 db.notifications = require("./notifications.model.js")(sequelize, DataTypes);
 db.user_books = require("./user_books.model.js")(sequelize, DataTypes);
@@ -87,7 +87,7 @@ db.books.belongsToMany(db.users, {
     timestamps: false
 });
 
-//define the relationship N:M between Users and Books models
+//define the relationship N:M between Users and Achievements models
 db.users.belongsToMany(db.achievements, {
     through: 'User_Achievements',
     timestamps: false

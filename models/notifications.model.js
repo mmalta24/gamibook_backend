@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 notEmpty: {
                     msg: "Título da notificação não pode estar vazio!"
-                },
+                }
             }
         },
         body: {
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 notEmpty: {
                     msg: "Texto da notificação não pode estar vazio!"
-                },
+                }
             }
         }
     }, {

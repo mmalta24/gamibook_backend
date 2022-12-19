@@ -8,7 +8,7 @@ const {
 const {
     verifyToken
 } = require("../controllers/auth.controller");
-const categoriesController = require("../controllers/categories.controller");
+const activityTypesController = require("../controllers/activityTypes.controller");
 
 router.use((req, res, next) => {
     const start = Date.now();
@@ -24,9 +24,9 @@ router.use((req, res, next) => {
 });
 
 router.route("/")
-    .get(verifyToken, categoriesController.findAllCategories)
+    .get(verifyToken, activityTypesController.findAllTypes)
     .post(
-        [body("name").trim().notEmpty().isString().withMessage("Insira o nome da categoria!")],
+        [body("name").trim().notEmpty().isString().withMessage("Insira o nome do tipo de atividade!")],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -36,12 +36,12 @@ router.route("/")
             } else {
                 next();
             }
-        }, verifyToken, categoriesController.createCategory);
+        }, verifyToken, activityTypesController.createType);
 
-router.route("/:idCategory")
+router.route("/:idType")
     .patch([
-            param("idCategory").isNumeric().withMessage("Insira um número no id da categoria!"),
-            body("name").trim().notEmpty().isString().withMessage("Insira o nome da categoria!")
+            param("idType").isNumeric().withMessage("Insira um número no id do tipo de atividade!"),
+            body("name").trim().notEmpty().isString().withMessage("Insira o nome do tipo de atividade!")
         ],
         (req, res, next) => {
             const errors = validationResult(req);
@@ -52,8 +52,9 @@ router.route("/:idCategory")
             } else {
                 next();
             }
-        }, verifyToken, categoriesController.updateCategory)
-    .delete([param("idCategory").isNumeric().withMessage("Insira um número no id da categoria!")],
+        }, verifyToken, activityTypesController.updateType)
+    .delete(
+        [param("idType").isNumeric().withMessage("Insira um número no id do tipo de atividade!")],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -63,12 +64,12 @@ router.route("/:idCategory")
             } else {
                 next();
             }
-        }, verifyToken, categoriesController.deleteCategory);
+        }, verifyToken, activityTypesController.deleteType);
 
 //send a predefined error message for invalid routes
 router.all('*', function (req, res) {
     res.status(404).json({
-        message: 'Categories: what???'
+        message: 'Activity Types: what???'
     });
 });
 

@@ -6,11 +6,37 @@ module.exports = (sequelize, DataTypes) => {
             notEmpty: true,
             validate: {
                 notNull: {
-                    msg: "Nome não pode estar vazio!"
+                    msg: "Nome da atividade não pode estar vazio!"
                 },
                 notEmpty: {
-                    msg: "Nome não pode estar vazio!"
+                    msg: "Nome da atividade não pode estar vazio!"
+                }
+            }
+        },
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            notEmpty: true,
+            validate: {
+                notNull: {
+                    msg: "Enunciado da atividade não pode estar vazio!"
                 },
+                notEmpty: {
+                    msg: "Enunciado da atividade não pode estar vazio!"
+                }
+            }
+        },
+        example: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            notEmpty: true,
+            validate: {
+                notNull: {
+                    msg: "Exemplo não pode estar vazio!"
+                },
+                notEmpty: {
+                    msg: "Exemplo não pode estar vazio!"
+                }
             }
         },
         question: {
@@ -23,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 notEmpty: {
                     msg: "Questão não pode estar vazia!"
-                },
+                }
             }
         },
         options: {
@@ -36,7 +62,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 notEmpty: {
                     msg: "Opções não pode estar vazias!"
-                },
+                }
             }
         },
         correctAnswer: {
@@ -49,7 +75,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 notEmpty: {
                     msg: "Resposta correta não pode estar vazia!"
-                },
+                }
             }
         },
         points: {
@@ -58,7 +84,7 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 isInt: {
                     msg: "O número de pontos precisa de ser inteiro!"
-                },
+                }
             }
         },
         imgBackground: {
@@ -71,7 +97,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 notEmpty: {
                     msg: "Imagem de fundo não pode estar vazia!"
-                },
+                }
             }
         }
     }, {

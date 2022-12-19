@@ -8,7 +8,7 @@ const {
 const {
     verifyToken
 } = require("../controllers/auth.controller");
-const categoriesController = require("../controllers/categories.controller");
+const levelsController = require("../controllers/levels.controller");
 
 router.use((req, res, next) => {
     const start = Date.now();
@@ -24,24 +24,10 @@ router.use((req, res, next) => {
 });
 
 router.route("/")
-    .get(verifyToken, categoriesController.findAllCategories)
-    .post(
-        [body("name").trim().notEmpty().isString().withMessage("Insira o nome da categoria!")],
-        (req, res, next) => {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({
-                    errors: errors.array()
-                });
-            } else {
-                next();
-            }
-        }, verifyToken, categoriesController.createCategory);
-
-router.route("/:idCategory")
-    .patch([
-            param("idCategory").isNumeric().withMessage("Insira um número no id da categoria!"),
-            body("name").trim().notEmpty().isString().withMessage("Insira o nome da categoria!")
+    .get(verifyToken, levelsController.findAllLevels)
+    .post([
+            body("points").isNumeric().withMessage("Insira o número de pontos necessários!"),
+            body("profileImage").trim().notEmpty().isURL().withMessage("Insira a imagem da consquista!")
         ],
         (req, res, next) => {
             const errors = validationResult(req);
@@ -52,8 +38,11 @@ router.route("/:idCategory")
             } else {
                 next();
             }
-        }, verifyToken, categoriesController.updateCategory)
-    .delete([param("idCategory").isNumeric().withMessage("Insira um número no id da categoria!")],
+        }, verifyToken, levelsController.createLevel);
+
+router.route("/:idLevel")
+    .get(
+        [param("idLevel").isNumeric().withMessage("Insira um número no id do nível!")],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -63,12 +52,27 @@ router.route("/:idCategory")
             } else {
                 next();
             }
-        }, verifyToken, categoriesController.deleteCategory);
+        }, verifyToken, levelsController.findOneLevelRanking)
+    .patch([
+            param("idLevel").isNumeric().withMessage("Insira um número no id do nível!"),
+            body("points").isNumeric().withMessage("Insira o número de pontos necessários!").optional(),
+            body("profileImage").trim().notEmpty().isURL().withMessage("Insira um URL com a imagem do nível!").optional()
+        ],
+        (req, res, next) => {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({
+                    errors: errors.array()
+                });
+            } else {
+                next();
+            }
+        }, verifyToken, levelsController.updateLevel);
 
 //send a predefined error message for invalid routes
 router.all('*', function (req, res) {
     res.status(404).json({
-        message: 'Categories: what???'
+        message: 'Levels: what???'
     });
 });
 

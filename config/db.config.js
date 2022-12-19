@@ -1,5 +1,4 @@
 const config = {
-    // read DB credencials from environment variables
     HOST: process.env.DB_HOST,
     USER: process.env.DB_USER,
     PASSWORD: process.env.DB_PASSWORD,
@@ -13,4 +12,5 @@ const config = {
         idle: 10000 //maximum time (ms) that a connection can be idle before being released
     }
 };
+
 module.exports = config;

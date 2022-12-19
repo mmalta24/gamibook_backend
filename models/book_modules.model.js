@@ -6,11 +6,11 @@ module.exports = (sequelize, DataTypes) => {
             notEmpty: true,
             validate: {
                 notNull: {
-                    msg: "Nome não pode estar vazio!"
+                    msg: "Nome do módulo não pode estar vazio!"
                 },
                 notEmpty: {
-                    msg: "Nome não pode estar vazio!"
-                },
+                    msg: "Nome do módulo não pode estar vazio!"
+                }
             }
         },
 

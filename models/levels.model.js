@@ -1,29 +1,12 @@
 module.exports = (sequelize, DataTypes) => {
     const Level = sequelize.define("Levels", {
-        levelNumber: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-            notEmpty: true,
-            unique: {
-                args: true,
-                msg: "Número do nível já existe!"
-            },
-            validate: {
-                notNull: {
-                    msg: "Número do nível não pode estar vazio!"
-                },
-                notEmpty: {
-                    msg: "Número do nível não pode estar vazio!"
-                },
-            }
-        },
         points: {
             type: DataTypes.INTEGER,
             allowNull: false,
             validate: {
                 notNull: {
                     msg: "Número de pontos não pode estar vazio!"
-                },
+                }
             }
         },
         profileImage: {
@@ -36,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
                 },
                 notEmpty: {
                     msg: "Avatar não pode estar vazio!"
-                },
+                }
             }
         }
     }, {

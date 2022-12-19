@@ -6,15 +6,15 @@ module.exports = (sequelize, DataTypes) => {
             notEmpty: true,
             unique: {
                 args: true,
-                msg: "Category name already exists!"
+                msg: "Nome da categoria já existe!"
             },
             validate: {
                 notNull: {
-                    msg: "Category name cannot be empty!"
+                    msg: "Nome da categoria não pode estar vazia!"
                 },
                 notEmpty: {
-                    msg: "Category name cannot be empty!"
-                },
+                    msg: "Nome da categoria não pode estar vazia!"
+                }
             }
         },
     }, {
