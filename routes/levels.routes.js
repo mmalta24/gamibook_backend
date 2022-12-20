@@ -26,9 +26,9 @@ router.use((req, res, next) => {
 router.route("/")
     .get(verifyToken, levelsController.findAllLevels)
     .post([
-            body("points").isNumeric().withMessage("Insira o número de pontos necessários!"),
-            body("profileImage").trim().notEmpty().isURL().withMessage("Insira a imagem da consquista!")
-        ],
+        body("points").isNumeric().withMessage("Insira o número de pontos necessários!"),
+        body("profileImage").trim().notEmpty().isURL().withMessage("Insira a imagem da consquista!")
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -39,6 +39,8 @@ router.route("/")
                 next();
             }
         }, verifyToken, levelsController.createLevel);
+
+router.route("/get").get(levelsController.executeRankingUpdate)
 
 router.route("/:idLevel")
     .get(
@@ -54,10 +56,10 @@ router.route("/:idLevel")
             }
         }, verifyToken, levelsController.findOneLevelRanking)
     .patch([
-            param("idLevel").isNumeric().withMessage("Insira um número no id do nível!"),
-            body("points").isNumeric().withMessage("Insira o número de pontos necessários!").optional(),
-            body("profileImage").trim().notEmpty().isURL().withMessage("Insira um URL com a imagem do nível!").optional()
-        ],
+        param("idLevel").isNumeric().withMessage("Insira um número no id do nível!"),
+        body("points").isNumeric().withMessage("Insira o número de pontos necessários!").optional(),
+        body("profileImage").trim().notEmpty().isURL().withMessage("Insira um URL com a imagem do nível!").optional()
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {

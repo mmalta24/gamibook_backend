@@ -192,3 +192,25 @@ exports.updateLevel = async (req, res) => {
         });
     }
 }
+
+exports.executeRankingUpdate = async (req, res) => {
+    const allUsers = await User.findAll({
+        where: { typeUser: "regular" }
+    });
+
+    let usersGroupByRanking = allUsers.map(user => user.dataValues).reduce((group, user) => {
+        const level = user.LevelId;
+        group[level] = group[level] ?? [];
+        group[level].push(user);
+        group[level].sort((a, b) => b.totalPoints - a.totalPoints);
+        return group;
+    }, {});
+
+    for (const level in usersGroupByRanking) {
+        for (let index = 0; index < usersGroupByRanking[level].length; index++) {
+            const rank = usersGroupByRanking[level];
+            let userToUpdate = rank[index];
+            await User.update({ lastRanking: index + 1 }, { where: { id: userToUpdate.id } });
+        }
+    }
+}
