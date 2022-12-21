@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
                     msg: "Nome não pode estar vazio!"
                 },
                 notEmpty: {
-                    msg: "Username não pode estar vazio!"
+                    msg: "Nome não pode estar vazio!"
                 }
             }
         },
@@ -23,10 +23,10 @@ module.exports = (sequelize, DataTypes) => {
             },
             validate: {
                 notNull: {
-                    msg: "Username não pode estar vazio!"
+                    msg: "Nome de utilizador não pode estar vazio!"
                 },
                 notEmpty: {
-                    msg: "Username não pode estar vazio!"
+                    msg: "Nome de utilizador não pode estar vazio!"
                 }
             }
         },

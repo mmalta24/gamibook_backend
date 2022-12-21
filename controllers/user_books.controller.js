@@ -443,6 +443,10 @@ exports.updateBookModuleActivity = async (req, res) => {
             });
         }
 
+        if (req.body.answers === activity.correctAnswer) {
+            await User.update({ tickets: user.dataValues.tickets + 1 }, { where: { id: user.dataValues.id } })
+        }
+
         await UserHistory.update(trimObjectStrings({
             answers: req.body.answers
         }), {
