@@ -40,9 +40,9 @@ router.route("/")
 
 router.route("/:idType")
     .patch([
-            param("idType").isNumeric().withMessage("Insira um número no id do tipo de atividade!"),
-            body("name").trim().notEmpty().isString().withMessage("Insira o nome do tipo de atividade!")
-        ],
+        param("idType").isNumeric().withMessage("Insira um número no id do tipo de atividade!"),
+        body("name").trim().notEmpty().isString().withMessage("Insira o nome do tipo de atividade!")
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {

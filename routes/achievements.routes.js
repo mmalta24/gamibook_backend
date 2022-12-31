@@ -3,7 +3,7 @@ let router = express.Router();
 const {
     body,
     param,
-    validationResult
+    validationResult, oneOf
 } = require("express-validator");
 const {
     verifyToken
@@ -29,7 +29,7 @@ router.route("/")
         body("name").trim().notEmpty().isString().withMessage("Insira um nome para a conquista!"),
         body("description").trim().notEmpty().isString().withMessage("Insira uma descrição para a conquista!"),
         body("pointsNeeded").isNumeric().withMessage("Insira o número de pontos necessários!"),
-        body("img").trim().notEmpty().isString().withMessage("Insira a imagem da consquista!")
+        body("img").trim().notEmpty().isURL().withMessage("Insira a imagem da consquista!")
     ], (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -57,10 +57,12 @@ router.route("/:idAchievement")
     .patch(
         [
             param("idAchievement").isNumeric().withMessage("Insira um número no id da conquista!"),
-            body("name").trim().notEmpty().isString().withMessage("Insira um nome para a conquista!").optional(),
-            body("description").trim().notEmpty().isString().withMessage("Insira uma descrição para a conquista!").optional(),
-            body("pointsNeeded").isNumeric().withMessage("Insira o número de pontos necessários!").optional(),
-            body("img").trim().notEmpty().isURL().withMessage("Insira a imagem da consquista!").optional()
+            oneOf([
+                body("name").trim().notEmpty().isString().withMessage("Insira um nome para a conquista!"),
+                body("description").trim().notEmpty().isString().withMessage("Insira uma descrição para a conquista!"),
+                body("pointsNeeded").isNumeric().withMessage("Insira o número de pontos necessários!"),
+                body("img").trim().notEmpty().isURL().withMessage("Insira a imagem da consquista!")
+            ])
         ], (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {

@@ -38,11 +38,9 @@ exports.findAllBooks = async (req, res) => {
             });
         }
 
-        books = req.query.category ? books.filter(book => book.CategoryId === +req.query.category) : books;
-
         return res.status(200).json({
             success: true,
-            books
+            books: req.query.category ? books.filter(book => book.CategoryId === +req.query.category) : books
         });
     } catch (err) {
         return res.status(500).json({
@@ -61,12 +59,15 @@ exports.createBook = async (req, res) => {
     }
 
     try {
+        const item = trimObjectStrings(req.body);
+
+
         const book = await Book.findOne({
             where: {
                 [Op.or]: [{
-                    name: req.body.name
+                    name: item.name
                 }, {
-                    code: req.body.code
+                    code: item.code
                 }]
             }
         });
@@ -78,7 +79,7 @@ exports.createBook = async (req, res) => {
             });
         }
 
-        const newBook = await Book.create(trimObjectStrings(req.body));
+        const newBook = await Book.create(item);
 
         return res.status(201).json({
             success: true,

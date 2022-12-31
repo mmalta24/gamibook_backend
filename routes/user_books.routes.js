@@ -39,10 +39,7 @@ router.route("/")
         },
         verifyToken, userBooksController.findAllBooks)
     .post(
-        [body("code").isNumeric().withMessage("Insira um código do livro!").isLength({
-                min: 4,
-                max: 4
-            })
+        [body("code").isNumeric().withMessage("Insira um código do livro!").isInt({ min: 1000, max: 9999 })
             .withMessage("O código necessita de ter 4 digitos!")
         ],
         (req, res, next) => {
@@ -96,10 +93,10 @@ router.route("/:idBook")
 
 router.route("/:idBook/modules/:idModule/activities/:idActivity")
     .get([
-            param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
-            param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
-            param("idActivity").isNumeric().withMessage("Insira um número no id da atividade!"),
-        ],
+        param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
+        param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
+        param("idActivity").isNumeric().withMessage("Insira um número no id da atividade!"),
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -111,11 +108,11 @@ router.route("/:idBook/modules/:idModule/activities/:idActivity")
             }
         }, verifyToken, userBooksController.findOneBookModuleActivity)
     .patch([
-            param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
-            param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
-            param("idActivity").isNumeric().withMessage("Insira um número no id da atividade!"),
-            body("answers").trim().notEmpty().isString().withMessage("Insira uma resposta!")
-        ],
+        param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
+        param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
+        param("idActivity").isNumeric().withMessage("Insira um número no id da atividade!"),
+        body("answers").trim().notEmpty().isString().withMessage("Insira uma resposta!")
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {

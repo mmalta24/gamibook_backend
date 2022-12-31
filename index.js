@@ -15,6 +15,12 @@ cron expression: minute hour day(number) month day(weekday)
 // At 00:00 on day-of-month 1 in every 3rd month.
 cron.schedule('0 0 1 */3 *', require('./controllers/levels.controller.js').executeRankingUpdate);
 
+// Swagger
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger.json");
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { explorer: true }));
+
 // routing middleware for resources
 app.use('/users', require('./routes/users.routes.js'));
 app.use('/achievements', require('./routes/achievements.routes'));

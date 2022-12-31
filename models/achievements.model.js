@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
         pointsNeeded: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            min: 0,
             validate: {
                 isInt: {
                     msg: "O número de pontos da conquista precisa de ser inteiro!"

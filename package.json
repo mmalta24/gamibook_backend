@@ -19,7 +19,8 @@
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.3.3",
     "node-cron": "^3.0.2",
-    "sequelize": "^6.26.0"
+    "sequelize": "^6.26.0",
+    "swagger-ui-express": "^4.6.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

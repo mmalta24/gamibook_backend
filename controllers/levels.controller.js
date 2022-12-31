@@ -54,7 +54,7 @@ exports.createLevel = async (req, res) => {
 
         const newLevel = await Level.create(trimObjectStrings(req.body));
 
-        return res.status(200).json({
+        return res.status(201).json({
             success: true,
             msg: "Nível criado!",
             uri: `/levels/${newLevel.id}`
@@ -75,14 +75,21 @@ exports.createLevel = async (req, res) => {
 
 exports.findOneLevelRanking = async (req, res) => {
     try {
+        const lvl = await Level.findByPk(req.params.idLevel);
+
+        if (!lvl) {
+            return res.status(404).json({
+                success: false,
+                msg: "Nível não encontrado!"
+            });
+        }
+
         if (req.typeUser === "admin") {
             const users = await User.findAll({
                 where: {
                     LevelId: req.params.idLevel
                 }
             });
-
-            const level = await Level.findByPk(req.params.idLevel);
 
             let ranking = [];
 
@@ -92,7 +99,7 @@ exports.findOneLevelRanking = async (req, res) => {
                     username: user.username,
                     totalPoints: user.totalPoints,
                     lastRanking: user.lastRanking,
-                    avatar: user.avatar ? user.avatar : level.profileImage
+                    avatar: user.avatar ? user.avatar : lvl.profileImage
                 })
             }
 
@@ -103,11 +110,18 @@ exports.findOneLevelRanking = async (req, res) => {
         }
         const user = await User.findByPk(req.userId);
 
+        if (user.LevelId !== +req.params.idLevel) {
+            return res.status(403).json({
+                success: false,
+                msg: "Não é possível ver o ranking de um nível além do atual!"
+            });
+        }
+
         const level = await user.getLevel();
 
         const users = await User.findAll({
             where: {
-                LevelId: level.id
+                LevelId: user.LevelId
             }
         });
 
@@ -143,20 +157,13 @@ exports.updateLevel = async (req, res) => {
         });
     }
 
-    if (!req.body.points && !req.body.profileImage) {
-        return res.status(400).json({
-            success: false,
-            msg: "É necessário pelo menos um elemento para atualizar o nível!"
-        })
-    }
-
     try {
         const level = await Level.findByPk(req.params.idLevel);
 
         if (!level) {
             return res.status(404).json({
                 success: false,
-                msg: "Nível não encontrada!"
+                msg: "Nível não encontrado!"
             });
         }
 

@@ -3,7 +3,11 @@ module.exports = (sequelize, DataTypes) => {
         points: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            min: 10,
             validate: {
+                isInt: {
+                    msg: "O número de pontos precisa de ser inteiro!"
+                },
                 notNull: {
                     msg: "Número de pontos não pode estar vazio!"
                 }

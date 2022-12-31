@@ -195,11 +195,11 @@ exports.findProfileNotifications = async (req, res) => {
             where: {
                 UserId: req.userId
             }
-        })
+        });
 
         return res.status(200).json({
             success: true,
-            notifications: notifications
+            notifications
         });
     } catch (err) {
         return res.status(500).json({

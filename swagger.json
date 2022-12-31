@@ -1,0 +1,4069 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "GamiBook API",
+        "description": "ESMAPP API - GamiBook é uma aplicação para a editora LIDEL que incentiva a aprendizagem através de exercícios gamificados. O token não expira já que a aplicação é destinada para o uso mobile.",
+        "version": "1.0"
+    },
+    "produces": [
+        "application/json"
+    ],
+    "schemes": [
+        "http"
+    ],
+    "components": {
+        "schemas": {
+            "Utilizador": {
+                "type": "object",
+                "required": [
+                    "fullName",
+                    "username",
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Identificador gerado automaticamente do utilizador"
+                    },
+                    "fullName": {
+                        "type": "string",
+                        "description": "Nome e apelido do utilizador"
+                    },
+                    "username": {
+                        "type": "string",
+                        "description": "Username do utilizador para ser possível aceder à conta e será único"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "description": "Email do utilizador que será único"
+                    },
+                    "password": {
+                        "type": "string",
+                        "description": "Password que o utilizador pretende utilizar na aplicação que futuramente será incriptada"
+                    },
+                    "tickets": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "default": 0,
+                        "description": "Quantidade de bilhetes disponíveis para jogar na roleta que o utilizador ganha através das atividades"
+                    },
+                    "lastRanking": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "Posição do ranking trimestral anterior"
+                    },
+                    "typeUser": {
+                        "type": "string",
+                        "enum": [
+                            "regular",
+                            "admin"
+                        ],
+                        "default": "regular",
+                        "description": "Tipo de utilizador que usa a aplicação e afeta as suas permissões"
+                    },
+                    "avatar": {
+                        "type": "string",
+                        "description": "Avatar personalizado do utilizador. Se estiver vazio é utilizado o avatar do nível"
+                    },
+                    "lastTimeLogged": {
+                        "type": "string",
+                        "description": "Último acesso do utilizador na aplicação (apenas aplicável para utilizador regular)"
+                    },
+                    "LevelId": {
+                        "type": "integer",
+                        "$ref": "#/components/schemas/Nível",
+                        "description": "Nível atual do utilizador que afeta o ranking"
+                    }
+                },
+                "example": {
+                    "fullName": "Maria Soares",
+                    "username": "utilizador",
+                    "email": "mariasoares@gmail.com",
+                    "password": "123"
+                }
+            },
+            "Notificação": {
+                "type": "object",
+                "required": [
+                    "title",
+                    "body",
+                    "UserId"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Identificador gerado automaticamente da notificação"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Título da notificação com o título do livro"
+                    },
+                    "body": {
+                        "type": "string",
+                        "description": "Descrição referente ao livro para o corpo da notificação"
+                    },
+                    "UserId": {
+                        "type": "integer",
+                        "description": "Identificador do utilizador regular que irá receber a notificação",
+                        "$ref": "#/components/schemas/Utilizador"
+                    }
+                },
+                "example": {
+                    "title": "Livro",
+                    "body": "O livro 'Livro' foi atualizado",
+                    "UserId": 2
+                }
+            },
+            "Nível": {
+                "type": "object",
+                "required": [
+                    "points",
+                    "profileImage"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Identificador gerado automaticamente do nível"
+                    },
+                    "points": {
+                        "type": "integer",
+                        "minimum": 10,
+                        "description": "Quantidade de pontos mínimos para o utilizador regular subir para esse nível"
+                    },
+                    "profileImage": {
+                        "type": "string",
+                        "description": "Imagem default do utilizador regular ter como avatar"
+                    }
+                },
+                "example": {
+                    "points": 1000,
+                    "profileImage": "https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png"
+                }
+            },
+            "Conquista": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "description",
+                    "pointsNeeded",
+                    "img"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Identificador gerado automaticamente da conquista"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Nome dado para a conquista que será único"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "Descrição de como obter a conquista ou outra informação"
+                    },
+                    "pointsNeeded": {
+                        "type": "integer",
+                        "description": "Quantidade de pontos necessários para o utilizador obter a conquista",
+                        "minimum": 0
+                    },
+                    "img": {
+                        "type": "string",
+                        "description": "Imagem da conquista"
+                    }
+                },
+                "example": {
+                    "name": "Sempre a praticar",
+                    "description": "Completa vários exercícios",
+                    "pointsNeeded": 5000,
+                    "img": "https://www.pngitem.com/pimgs/m/181-1817201_just-another-example-hd-png-download.png"
+                }
+            },
+            "Categoria": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Identificador gerado automaticamente da categoria"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Nome dado para a categoria do livro que será único"
+                    }
+                },
+                "example": {
+                    "name": "Informática"
+                }
+            },
+            "TipoAtividade": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Identificador gerado automaticamente do tipo de atividade"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Nome dado para o tipo de atividade que será único"
+                    }
+                },
+                "example": {
+                    "name": "Correspondència"
+                }
+            },
+            "Livro": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "authors",
+                    "imgBook",
+                    "code",
+                    "CategoryId"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Identificador gerado automaticamente do livro"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Nome dado para o livro que será único"
+                    },
+                    "authors": {
+                        "type": "string",
+                        "description": "Autores do livro"
+                    },
+                    "imgBook": {
+                        "type": "string",
+                        "description": "Capa do livro"
+                    },
+                    "imgBackground": {
+                        "type": "string",
+                        "description": "Imagem de fundo para a página do livro"
+                    },
+                    "code": {
+                        "type": "integer",
+                        "description": "Código de 4 digítos único para o livro",
+                        "minimum": 1000,
+                        "maximum": 9999
+                    },
+                    "CategoryId": {
+                        "type": "integer",
+                        "description": "Categoria do livro",
+                        "$ref": "#/components/schemas/Categoria"
+                    }
+                },
+                "example": {
+                    "name": "Bases de Dados - Fundamentos e Aplicações",
+                    "imgBook": "https://www.lidel.pt/fotos/produtos/9789896939017_bases_de_dados_capa_200_kb_94020159260253d50cc8e9.jpg",
+                    "code": 9999,
+                    "CategoryId": 2
+                }
+            },
+            "Módulo": {
+                "type": "object",
+                "required": [
+                    "moduleName",
+                    "BookId"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Identificador gerado automaticamente do módulo do livro"
+                    },
+                    "moduleName": {
+                        "type": "string",
+                        "description": "Nome dado para a o módulo"
+                    },
+                    "BookId": {
+                        "type": "integer",
+                        "description": "Identificador do livro ao qual o módulo está associado",
+                        "$ref": "#/components/schemas/Livro"
+                    }
+                },
+                "example": {
+                    "moduleName": "Introdução à Bases de Dados",
+                    "BookId": 2
+                }
+            },
+            "Atividade": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "title",
+                    "question",
+                    "options",
+                    "correctAnswer",
+                    "points",
+                    "BookModuleId",
+                    "ActivityTypeId"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Identificador gerado automaticamente da atividade"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Nome dado para a atividade"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Enunciado da atividade"
+                    },
+                    "question": {
+                        "type": "string",
+                        "description": "Pergunta(s) que estarão presentes na execução da atividade. No caso de ser mais que uma, deve estar separado por '/'"
+                    },
+                    "example": {
+                        "type": "string",
+                        "description": "Exemplo de resolução do exercício"
+                    },
+                    "options": {
+                        "type": "string",
+                        "description": "Opções de resposta. Para cada pergunta do 'question', separadas por '/', as opções de resposta estão separadas por ','"
+                    },
+                    "correctAnswer": {
+                        "type": "string",
+                        "description": "Respostas corretas da atividade"
+                    },
+                    "points": {
+                        "type": "integer",
+                        "description": "Quantidade de pontos que a atividade dá ao utilizador"
+                    },
+                    "BookModuleId": {
+                        "type": "integer",
+                        "description": "Módulo ao qual a atividade está associada",
+                        "$ref": "#/components/schemas/Módulo"
+                    },
+                    "ActivityTypeId": {
+                        "type": "integer",
+                        "description": "Tipo de atividade",
+                        "$ref": "#/components/schemas/TipoAtividade"
+                    }
+                },
+                "example": {
+                    "name": "Bases de Dados I",
+                    "title": "Responda corretamente à pergunta.",
+                    "question": "Que tipo de dados não está incluído no no MySQL?",
+                    "options": "DATE,INT,VARCHAR,NUMBER",
+                    "correctAnswer": "NUMBER",
+                    "points": 20,
+                    "BookModuleId": 2,
+                    "ActivityTypeId": 1
+                }
+            },
+            "Livros do utilizador": {
+                "type": "object",
+                "required": [
+                    "UserId",
+                    "BookId"
+                ],
+                "properties": {
+                    "UserId": {
+                        "type": "integer",
+                        "description": "Identificador do utilizador regular que adicionou o livro",
+                        "$ref": "#/components/schemas/Utilizador"
+                    },
+                    "BookId": {
+                        "type": "integer",
+                        "description": "Identificador do livro que o utilizador regular adicionou",
+                        "$ref": "#/components/schemas/Livro"
+                    },
+                    "liked": {
+                        "type": "boolean",
+                        "description": "O utilizador gosta do livro?"
+                    }
+                },
+                "example": {
+                    "UserId": 2,
+                    "BookId": 2
+                }
+            },
+            "Histórico do utilizador": {
+                "type": "object",
+                "required": [
+                    "UserId",
+                    "ActivityId",
+                    "answers"
+                ],
+                "properties": {
+                    "UserId": {
+                        "type": "integer",
+                        "description": "Identificador do utilizador regular que fez a atividade",
+                        "$ref": "#/components/schemas/Utilizador"
+                    },
+                    "ActivityId": {
+                        "type": "integer",
+                        "description": "Identificador da atividade que foi realizada",
+                        "$ref": "#/components/schemas/Atividade"
+                    },
+                    "answers": {
+                        "type": "string",
+                        "description": "Respostas dadas para a atividade"
+                    }
+                },
+                "example": {
+                    "UserId": 2,
+                    "ActivityId": 2,
+                    "answers": "VARCHAR"
+                }
+            },
+            "Conquistas do utilizador": {
+                "type": "object",
+                "required": [
+                    "UserId",
+                    "AchievementId"
+                ],
+                "properties": {
+                    "UserId": {
+                        "type": "integer",
+                        "description": "Identificador do utilizador regular que fez a atividade",
+                        "$ref": "#/components/schemas/Utilizador"
+                    },
+                    "AchievementId": {
+                        "type": "integer",
+                        "description": "Identificador da atividade que foi realizada",
+                        "$ref": "#/components/schemas/Conquista"
+                    }
+                },
+                "example": {
+                    "UserId": 2,
+                    "AchievementId": 1
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "examples": {
+            "users": {
+                "missing_username": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira um username!"
+                    }
+                },
+                "missing_password": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira uma password!"
+                    }
+                },
+                "missing_name": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira o seu nome!"
+                    }
+                },
+                "missing_email": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira um email!"
+                    }
+                },
+                "invalid_email": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira um email válido!"
+                    }
+                },
+                "fields_duplicated": {
+                    "value": {
+                        "success": false,
+                        "msg": "Já existe um utilizador com esse username ou email!"
+                    }
+                }
+            },
+            "levels": {
+                "missing_points": {
+                    "value": {
+                        "success": false,
+                        "msg": "nsira o número de pontos necessários!"
+                    }
+                },
+                "missing_image": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira a imagem da consquista!"
+                    }
+                },
+                "invalid_points": {
+                    "value": {
+                        "success": false,
+                        "msg": "O novo nível não pode ter menor ou igual pontuação que o nível anterior!"
+                    }
+                },
+                "invalid_id": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira um número no id do nível!"
+                    }
+                }
+            },
+            "achievements": {
+                "missing_name": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira um nome para a conquista!"
+                    }
+                },
+                "missing_description": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira uma descrição para a conquista!"
+                    }
+                },
+                "missing_points": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira o número de pontos necessários!"
+                    }
+                },
+                "missing_img": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira a imagem da consquista!"
+                    }
+                },
+                "invalid_id": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira um número no id da conquista!"
+                    }
+                }
+            },
+            "categories": {
+                "invalid_id": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira um número no id da categoria!"
+                    }
+                }
+            },
+            "types": {
+                "invalid_id": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira um número no id do tipo de atividade!"
+                    }
+                }
+            },
+            "books": {
+                "missing_name": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira o nome do livro!"
+                    }
+                },
+                "missing_authors": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira o(s) autor(es) do livro!"
+                    }
+                },
+                "missing_imgBook": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira a capa do livro!"
+                    }
+                },
+                "missing_code": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira o código do livro!"
+                    }
+                },
+                "missing_category": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira uma categoria!"
+                    }
+                },
+                "invalid_imgBackground": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira a imagem de fundo!"
+                    }
+                },
+                "invalid_code": {
+                    "value": {
+                        "success": false,
+                        "msg": "O código necessita de ter 4 digitos!"
+                    }
+                },
+                "invalid_id": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira um número no id do livro!"
+                    }
+                }
+            },
+            "modules": {
+                "invalid_id": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira um número no id do livro!"
+                    }
+                },
+                "missing_name": {
+                    "value": {
+                        "success": false,
+                        "msg": "Insira o nome do módulo!"
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "idNotification": {
+                "name": "idNotification",
+                "in": "path",
+                "description": "Identificador da notificação",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "idUser": {
+                "name": "idUser",
+                "in": "path",
+                "description": "Identificador do utilizador",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "idLevel": {
+                "name": "idLevel",
+                "in": "path",
+                "description": "Identificador do nível",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "idAchievement": {
+                "name": "idAchievement",
+                "in": "path",
+                "description": "Identificador da conquista",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "idCategory": {
+                "name": "idCategory",
+                "in": "path",
+                "description": "Identificador da categoria",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "idType": {
+                "name": "idType",
+                "in": "path",
+                "description": "Identificador do tipo de atividade",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "bookCategory": {
+                "name": "category",
+                "in": "query",
+                "description": "Identificador da categoria",
+                "required": false,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "idBook": {
+                "name": "idBook",
+                "in": "path",
+                "description": "Identificador do livro",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "idModule": {
+                "name": "idModule",
+                "in": "path",
+                "description": "Identificador do módulo",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "idActivity": {
+                "name": "idActivity",
+                "in": "path",
+                "description": "Identificador da atividade",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "responses": {
+            "general": {
+                "400": {
+                    "idUser": {
+                        "description": "Caminho inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do utilizador!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idNotification": {
+                        "description": "Caminho inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id da notificação!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idLevel": {
+                        "description": "Caminho inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do nível!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idAchievement": {
+                        "description": "Caminho inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id da conquista!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idCategory": {
+                        "description": "Caminho inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id da categoria!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idType": {
+                        "description": "Caminho inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do tipo de atividade!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idBook": {
+                        "description": "Caminho inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do livro!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idModule": {
+                        "description": "Caminho inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do módulo!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idActivity": {
+                        "description": "Caminho inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id da atividade!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "401": {
+                    "unauthorized": {
+                        "description": "Não autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Sem token": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Precisa de estar autenticado com um token de acesso para aceder a essa informação!"
+                                        }
+                                    },
+                                    "Token inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Não autorizado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "403": {
+                    "forbidden": {
+                        "description": "Acesso proibido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Utilizador não tem permissão": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "O seu tipo de utilizador não tem permissões para [função da rota]!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "404": {
+                    "idUser": {
+                        "description": "Utilizador não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Utilizador inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Utilizador não encontrado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idNotification": {
+                        "description": "Notificação não encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Notificação inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Notificação não encontrada!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idLevel": {
+                        "description": "Nível não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Nível inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Nível não encontrado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idAchievement": {
+                        "description": "Conquista não encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Conquista inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Conquista não encontrada!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idCategory": {
+                        "description": "Categoria não encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Categoria inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Categoria não encontrada!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idType": {
+                        "description": "Tipo de atividade não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Tipo inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Tipo de atividade não encontrado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idBook": {
+                        "description": "Livro não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Livro inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Livro não encontrado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idModule": {
+                        "description": "Módulo não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Módulo inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Módulo não encontrado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idActivity": {
+                        "description": "Atividade não encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Atividade inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Atividade não encontrada!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "book_module": {
+                        "description": "Campos não encontrados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Livro inexistente": {
+                                        "$ref": "#/components/examples/books/invalid_id"
+                                    },
+                                    "Módulo inexistente": {
+                                        "$ref": "#/components/examples/modules/invalid_id"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "users": {
+                "200": {
+                    "login": {
+                        "description": "Utilizador autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Login": {
+                                        "value": {
+                                            "success": true,
+                                            "accessToken": "[token]",
+                                            "typeUser": "regular"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "findAllUsers": {
+                        "description": "Lista de utilizadores",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Utilizador"
+                                },
+                                "examples": {
+                                    "Lista": {
+                                        "value": {
+                                            "success": true,
+                                            "users": [
+                                                {
+                                                    "id": 1,
+                                                    "fullName": "Administração Lidel",
+                                                    "username": "admin",
+                                                    "email": "admin@gmail.com",
+                                                    "tickets": 0,
+                                                    "totalPoints": 0,
+                                                    "lastRanking": null,
+                                                    "typeUser": "admin",
+                                                    "avatar": "https://vinhhungjsc.com/public/admin/img/avatar.png",
+                                                    "lastTimeLogged": null,
+                                                    "LevelId": null
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "getProfile": {
+                        "description": "Perfil do utilizador autenticado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Utilizador"
+                                },
+                                "examples": {
+                                    "Perfil": {
+                                        "value": {
+                                            "success": true,
+                                            "user": {
+                                                "id": 1,
+                                                "fullName": "Administração Lidel",
+                                                "username": "admin",
+                                                "email": "admin@gmail.com",
+                                                "tickets": 0,
+                                                "totalPoints": 0,
+                                                "lastRanking": null,
+                                                "typeUser": "admin",
+                                                "avatar": "https://vinhhungjsc.com/public/admin/img/avatar.png",
+                                                "lastTimeLogged": null,
+                                                "LevelId": null
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateProfile": {
+                        "description": "Informação atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Informação atualizada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Campo atualizado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "findOneUser": {
+                        "description": "Perfil do utilizador de determinado id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Utilizador"
+                                },
+                                "examples": {
+                                    "Perfil": {
+                                        "value": {
+                                            "success": true,
+                                            "user": {
+                                                "id": 2,
+                                                "fullName": "Maria Soares",
+                                                "username": "utilizador",
+                                                "email": "mariasoares@gmail.com",
+                                                "tickets": 0,
+                                                "totalPoints": 0,
+                                                "lastRanking": null,
+                                                "typeUser": "regular",
+                                                "avatar": "https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png",
+                                                "lastTimeLogged": "2022-12-22",
+                                                "LevelId": 1
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "201": {
+                    "register": {
+                        "description": "Utilizador criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Utilizador registado": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Utilizador criado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "createAdminUser": {
+                        "description": "Administrador criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Administrador criado": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Administrador criado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "register": {
+                        "description": "Campos vazios",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Falta username": {
+                                        "$ref": "#/components/examples/users/missing_username"
+                                    },
+                                    "Falta password": {
+                                        "$ref": "#/components/examples/users/missing_password"
+                                    },
+                                    "Falta fullName": {
+                                        "$ref": "#/components/examples/users/missing_name"
+                                    },
+                                    "Falta email": {
+                                        "$ref": "#/components/examples/users/missing_email"
+                                    },
+                                    "Email inválido": {
+                                        "$ref": "#/components/examples/users/invalid_email"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "login": {
+                        "description": "Campos vazios",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Falta username": {
+                                        "$ref": "#/components/examples/users/missing_username"
+                                    },
+                                    "Falta password": {
+                                        "$ref": "#/components/examples/users/missing_password"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "createAdminUser": {
+                        "description": "Campos vazios",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Falta username": {
+                                        "$ref": "#/components/examples/users/missing_username"
+                                    },
+                                    "Falta password": {
+                                        "$ref": "#/components/examples/users/missing_password"
+                                    },
+                                    "Falta fullName": {
+                                        "$ref": "#/components/examples/users/missing_name"
+                                    },
+                                    "Falta email": {
+                                        "$ref": "#/components/examples/users/missing_email"
+                                    },
+                                    "Email inválido": {
+                                        "$ref": "#/components/examples/users/invalid_email"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateProfile": {
+                        "description": "Nenhum campo enviado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Falta avatar": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um avatar!"
+                                        }
+                                    },
+                                    "Falta password": {
+                                        "$ref": "#/components/examples/users/missing_password"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "401": {
+                    "login": {
+                        "description": "Username e password não coincidem",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Credenciais erradas": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Credenciais erradas!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "406": {
+                    "register": {
+                        "description": "Valores duplicados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Username/Email duplicado": {
+                                        "$ref": "#/components/examples/users/fields_duplicated"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "notifications": {
+                "200": {
+                    "findProfileNotifications": {
+                        "description": "Lista de notificações",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Notificação"
+                                },
+                                "examples": {
+                                    "Lista": {
+                                        "value": {
+                                            "success": true,
+                                            "notifications": [
+                                                {
+                                                    "id": 1,
+                                                    "title": "Português Em Foco 1",
+                                                    "body": "Uma atividade foi adicionada ao livro!",
+                                                    "UserId": 2
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "deleteProfileNotification": {
+                        "description": "Notificação apagada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Notificação"
+                                },
+                                "examples": {
+                                    "Notificação apagada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Notificação apagada!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "levels": {
+                "200": {
+                    "findAllLevels": {
+                        "description": "Lista de níveis",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Nível"
+                                },
+                                "examples": {
+                                    "Lista": {
+                                        "value": {
+                                            "success": true,
+                                            "levels": [
+                                                {
+                                                    "id": 1,
+                                                    "points": 0,
+                                                    "profileImage": "https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png"
+                                                },
+                                                {
+                                                    "id": 2,
+                                                    "points": 100,
+                                                    "profileImage": "https://www.pngarts.com/files/11/Avatar-Free-PNG-Image.png"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "findOneLevelRanking": {
+                        "description": "Ranking do nível",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Nível"
+                                },
+                                "examples": {
+                                    "Lista": {
+                                        "value": {
+                                            "success": true,
+                                            "levels": [
+                                                {
+                                                    "id": 2,
+                                                    "username": "utilizador",
+                                                    "totalPoints": 0,
+                                                    "lastRanking": null,
+                                                    "avatar": "https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateLevel": {
+                        "description": "Atualiza um certo campo do nível",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Informação atualizada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Nível atualizado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "201": {
+                    "createLevel": {
+                        "description": "Nível criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Nível"
+                                },
+                                "examples": {
+                                    "Nível adicionado": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Nível criado!",
+                                            "uri": "/levels/{idLevel}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "createLevel": {
+                        "description": "Campos vazios",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Falta pontos": {
+                                        "$ref": "#/components/examples/levels/missing_points"
+                                    },
+                                    "Falta imagem": {
+                                        "$ref": "#/components/examples/levels/missing_image"
+                                    },
+                                    "Pontos inválidos": {
+                                        "$ref": "#/components/examples/levels/invalid_points"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateLevel": {
+                        "description": "Campos vazios ou inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "$ref": "#/components/examples/levels/invalid_id"
+                                    },
+                                    "Falta imagem": {
+                                        "$ref": "#/components/examples/levels/missing_image"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "achievements": {
+                "200": {
+                    "findAllAchievements": {
+                        "description": "Lista de conquistas",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Conquista"
+                                },
+                                "examples": {
+                                    "Lista - Regular": {
+                                        "value": {
+                                            "success": true,
+                                            "achievements": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "Conquista 1",
+                                                    "description": "Obtem 50 pontos",
+                                                    "pointsNeeded": 50,
+                                                    "img": "https://cdn-icons-png.flaticon.com/512/1304/1304500.png",
+                                                    "owned": false
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "Lista - Administrador": {
+                                        "value": {
+                                            "success": true,
+                                            "achievements": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "Conquista 1",
+                                                    "description": "Obtem 50 pontos",
+                                                    "pointsNeeded": 50,
+                                                    "img": "https://cdn-icons-png.flaticon.com/512/1304/1304500.png"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "findOneAchievement": {
+                        "description": "Conquista por determinado id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Conquista"
+                                },
+                                "examples": {
+                                    "Conquista - Regular": {
+                                        "value": {
+                                            "success": true,
+                                            "achievement": {
+                                                "id": 1,
+                                                "name": "Conquista 1",
+                                                "description": "Obtem 50 pontos",
+                                                "pointsNeeded": 50,
+                                                "img": "https://cdn-icons-png.flaticon.com/512/1304/1304500.png",
+                                                "owned": false
+                                            }
+                                        }
+                                    },
+                                    "Conquista - Administrador": {
+                                        "value": {
+                                            "success": true,
+                                            "achievement": {
+                                                "id": 1,
+                                                "name": "Conquista 1",
+                                                "description": "Obtem 50 pontos",
+                                                "pointsNeeded": 50,
+                                                "img": "https://cdn-icons-png.flaticon.com/512/1304/1304500.png"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateAchievement": {
+                        "description": "Informação atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Informação atualizada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Conquista atualizada!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "deleteAchievement": {
+                        "description": "Conquista apagada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Conquista apagada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Conquista apagada!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "201": {
+                    "createAchievement": {
+                        "description": "Conquista criada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Conquista válida": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Conquista criada!",
+                                            "uri": "/achievements/{idAchievement}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "createAchievement": {
+                        "description": "Campos vazios",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Falta nome": {
+                                        "$ref": "#/components/examples/achievements/missing_name"
+                                    },
+                                    "Falta descrição": {
+                                        "$ref": "#/components/examples/achievements/missing_description"
+                                    },
+                                    "Falta pontos": {
+                                        "$ref": "#/components/examples/achievements/missing_points"
+                                    },
+                                    "Falta imagem": {
+                                        "$ref": "#/components/examples/achievements/missing_img"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateAchievement": {
+                        "description": "Campos vazios ou inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "$ref": "#/components/examples/achievements/invalid_id"
+                                    },
+                                    "Falta nome": {
+                                        "$ref": "#/components/examples/achievements/missing_name"
+                                    },
+                                    "Falta descrição": {
+                                        "$ref": "#/components/examples/achievements/missing_description"
+                                    },
+                                    "Falta pontos": {
+                                        "$ref": "#/components/examples/achievements/missing_points"
+                                    },
+                                    "Falta imagem": {
+                                        "$ref": "#/components/examples/achievements/missing_img"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "406": {
+                    "achievementName": {
+                        "description": "Valores duplicados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Nome duplicado": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Já existe uma conquista com esse nome!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "categories": {
+                "200": {
+                    "findAllCategories": {
+                        "description": "Lista de categorias",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Categoria"
+                                },
+                                "examples": {
+                                    "Lista": {
+                                        "value": {
+                                            "success": true,
+                                            "categories": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "PLNM"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateCategory": {
+                        "description": "Informação atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Informação atualizada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Categoria atualizada!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "deleteCategory": {
+                        "description": "Categoria apagada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Categoria apagada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Categoria apagada!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "201": {
+                    "createCategory": {
+                        "description": "Categoria criada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Categoria"
+                                },
+                                "examples": {
+                                    "Categoria válida": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Categoria criada!",
+                                            "uri": "/categories/{idCategory}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "createCategory": {
+                        "description": "Nome inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Falta nome": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira o nome da categoria!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateCategory": {
+                        "description": "Valores inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "$ref": "#/components/examples/categories/invalid_id"
+                                    },
+                                    "Nome inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira o nome da categoria!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "deleteCategory": {
+                        "description": "Valor inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "$ref": "#/components/examples/categories/invalid_id"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "406": {
+                    "categoryName": {
+                        "description": "Valor duplicado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Nome duplicado": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Já existe uma categoria com esse nome!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "types": {
+                "200": {
+                    "findAllTypes": {
+                        "description": "Lista de tipos de atividade",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TipoAtividade"
+                                },
+                                "examples": {
+                                    "Lista": {
+                                        "value": {
+                                            "success": true,
+                                            "activityTypes": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "Escolha Múltipla"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateType": {
+                        "description": "Informação atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Informação atualizada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Tipo de atividade atualizado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "deleteType": {
+                        "description": "Tipo de atividade apagado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Tipo de atividade apagado": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Tipo de atividade apagado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "201": {
+                    "createType": {
+                        "description": "Tipo de atividade criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TipoAtividade"
+                                },
+                                "examples": {
+                                    "Tipo válido": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Tipo de atividade criado!",
+                                            "uri": "/activityTypes/{idType}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "createType": {
+                        "description": "Nome inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Falta nome": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira o nome do tipo de atividade!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateType": {
+                        "description": "Valores inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "$ref": "#/components/examples/categories/invalid_id"
+                                    },
+                                    "Falta nome": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira o nome do tipo de atividade!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "deleteType": {
+                        "description": "Valor inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "$ref": "#/components/examples/types/invalid_id"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "406": {
+                    "typeName": {
+                        "description": "Valor duplicado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Nome duplicado": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Já existe um tipo de atividade com esse nome!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "books": {
+                "200": {
+                    "findAllBooks": {
+                        "description": "Lista de livros",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Livro"
+                                },
+                                "examples": {
+                                    "Lista completa": {
+                                        "value": {
+                                            "success": true,
+                                            "books": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "Português Em Foco 1",
+                                                    "authors": "Luísa Coelho, Carla Oliveira, João Malaca Casteleiro",
+                                                    "imgBook": "https://static.fnac-static.com/multimedia/Images/PT/NR/7b/f8/5b/6027387/1540-1.jpg",
+                                                    "imgBackground": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/255px-Flag_of_Portugal.svg.png",
+                                                    "code": 1234,
+                                                    "CategoryId": 1,
+                                                    "category": "PLNM"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "Lista filtrada": {
+                                        "value": {
+                                            "success": true,
+                                            "books": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "Português Em Foco 1",
+                                                    "authors": "Luísa Coelho, Carla Oliveira, João Malaca Casteleiro",
+                                                    "imgBook": "https://static.fnac-static.com/multimedia/Images/PT/NR/7b/f8/5b/6027387/1540-1.jpg",
+                                                    "imgBackground": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/255px-Flag_of_Portugal.svg.png",
+                                                    "code": 1234,
+                                                    "CategoryId": 1,
+                                                    "category": "PLNM"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "findOneBook": {
+                        "description": "Livro por determinado id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Livro"
+                                },
+                                "examples": {
+                                    "Livro": {
+                                        "value": {
+                                            "success": true,
+                                            "book": {
+                                                "id": 1,
+                                                "name": "Português Em Foco 1",
+                                                "authors": "Luísa Coelho, Carla Oliveira, João Malaca Casteleiro",
+                                                "imgBook": "https://static.fnac-static.com/multimedia/Images/PT/NR/7b/f8/5b/6027387/1540-1.jpg",
+                                                "imgBackground": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/255px-Flag_of_Portugal.svg.png",
+                                                "code": 1234,
+                                                "CategoryId": 1,
+                                                "category": "PLNM"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateBook": {
+                        "description": "Informação atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Informação atualizada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Livro atualizado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "deleteBook": {
+                        "description": "Livro apagado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Livro apagado": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Livro apagado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "201": {
+                    "createBook": {
+                        "description": "Livro criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Livro válido": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Livro criado!",
+                                            "uri": "/books/{idBook}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "createBook": {
+                        "description": "Campos vazios ou inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Falta nome": {
+                                        "$ref": "#/components/examples/books/missing_name"
+                                    },
+                                    "Falta autor": {
+                                        "$ref": "#/components/examples/books/missing_authors"
+                                    },
+                                    "Falta capa": {
+                                        "$ref": "#/components/examples/books/missing_imgBook"
+                                    },
+                                    "Falta código": {
+                                        "$ref": "#/components/examples/books/missing_code"
+                                    },
+                                    "Falta categoria": {
+                                        "$ref": "#/components/examples/books/missing_category"
+                                    },
+                                    "Imagem inválida": {
+                                        "$ref": "#/components/examples/books/invalid_imgBackground"
+                                    },
+                                    "Código inválido": {
+                                        "$ref": "#/components/examples/books/invalid_code"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateBook": {
+                        "description": "Campos vazios ou inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido": {
+                                        "$ref": "#/components/examples/books/invalid_id"
+                                    },
+                                    "Sem informação": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Não tem informação para atualizar!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "406": {
+                    "name_code": {
+                        "description": "Valores duplicados",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Nome e/ou código duplicado": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Já existe um livro com esse nome ou código!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "modules": {
+                "200": {
+                    "findAllBookModules": {
+                        "description": "Lista de módulos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Módulo"
+                                },
+                                "examples": {
+                                    "Lista": {
+                                        "value": {
+                                            "success": true,
+                                            "modules": [
+                                                {
+                                                    "id": 1,
+                                                    "moduleName": "Eu trabalho em casa com o meu colega.",
+                                                    "BookId": 1
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateBookModule": {
+                        "description": "Informação atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Informação atualizada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Módulo atualizado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "deleteBookModule": {
+                        "description": "Módulo apagado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Módulo apagado": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Módulo apagado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "201": {
+                    "createBookModule": {
+                        "description": "Módulo criado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Módulo válido": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Módulo criado!",
+                                            "uri": "/books/{idBook}/modules/{idModule}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "createBookModule": {
+                        "description": "Nome inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Nome inválido": {
+                                        "$ref": "#/components/examples/modules/missing_name"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateBookModule": {
+                        "description": "Valores inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id do livro inválido": {
+                                        "$ref": "#/components/examples/books/invalid_id"
+                                    },
+                                    "Id do módulo inválido": {
+                                        "$ref": "#/components/examples/modules/invalid_id"
+                                    },
+                                    "Nome inválido": {
+                                        "$ref": "#/components/examples/modules/missing_name"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "deleteBookModule": {
+                        "description": "Valores inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id do livro inválido": {
+                                        "$ref": "#/components/examples/books/invalid_id"
+                                    },
+                                    "Id do módulo inválido": {
+                                        "$ref": "#/components/examples/modules/invalid_id"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "requestBodies": {
+            "users": {
+                "register_regular_user": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Utilizador"
+                            },
+                            "examples": {
+                                "Utilizador": {
+                                    "value": {
+                                        "username": "utilizador",
+                                        "password": "123",
+                                        "fullName": "Maria Soares",
+                                        "email": "mariasoares@gmail.com"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "login": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Utilizador"
+                            },
+                            "examples": {
+                                "Utilizador regular": {
+                                    "value": {
+                                        "username": "utilizador",
+                                        "password": "123"
+                                    }
+                                },
+                                "Utilizador administrador": {
+                                    "value": {
+                                        "username": "admin",
+                                        "password": "123"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "register_admin_user": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Utilizador"
+                            },
+                            "examples": {
+                                "Administrador": {
+                                    "value": {
+                                        "username": "admin",
+                                        "password": "123",
+                                        "fullName": "Tomás Araújo",
+                                        "email": "tomas@gmail.com"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "updateProfile": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Utilizador"
+                            },
+                            "examples": {
+                                "Atualizar avatar": {
+                                    "value": {
+                                        "avatar": "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?w=2000"
+                                    }
+                                },
+                                "Atualizar password": {
+                                    "value": {
+                                        "password": "123"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "levels": {
+                "createLevel": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Nível"
+                            },
+                            "examples": {
+                                "Nível válido": {
+                                    "value": {
+                                        "points": 500,
+                                        "profileImage": "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile.png"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "updateLevel": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Nível"
+                            },
+                            "examples": {
+                                "Atualizar imagem": {
+                                    "value": {
+                                        "profileImage": "https://www.pngall.com/wp-content/uploads/12/Avatar-Profile.png"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "achievements": {
+                "createAchievement": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Conquista"
+                            },
+                            "examples": {
+                                "Conquista válida": {
+                                    "value": {
+                                        "name": "Conquista X",
+                                        "description": "Obtem 5000 pontos",
+                                        "pointsNeeded": 5000,
+                                        "img": "https://cdn-icons-png.flaticon.com/512/1304/1304500.png"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "updateAchievement": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Conquista"
+                            },
+                            "examples": {
+                                "Atualizar nome": {
+                                    "value": {
+                                        "name": "Conquista X"
+                                    }
+                                },
+                                "Atualizar descrição": {
+                                    "value": {
+                                        "description": "Obtem 5000 pontos"
+                                    }
+                                },
+                                "Atualizar pontos": {
+                                    "value": {
+                                        "pointsNeeded": 5000
+                                    }
+                                },
+                                "Atualizar imagem": {
+                                    "value": {
+                                        "img": "https://cdn-icons-png.flaticon.com/512/1304/1304500.png"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "categories": {
+                "categoryName": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Categoria"
+                            },
+                            "examples": {
+                                "Categoria válida": {
+                                    "value": {
+                                        "name": "Inglês"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "types": {
+                "typeName": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TipoAtividade"
+                            },
+                            "examples": {
+                                "Tipo válido": {
+                                    "value": {
+                                        "name": "Correspondència"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "books": {
+                "createBook": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Livro"
+                            },
+                            "examples": {
+                                "Livro válido": {
+                                    "value": {
+                                        "name": "Português I",
+                                        "authors": "Luísa Coelho",
+                                        "imgBook": "https://static.fnac-static.com/multimedia/Images/PT/NR/b4/84/28/2655412/1540-1.jpg",
+                                        "code": 1236,
+                                        "CategoryId": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "updateBook": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Livro"
+                            },
+                            "examples": {
+                                "Atualizar nome": {
+                                    "value": {
+                                        "name": "Português I"
+                                    }
+                                },
+                                "Atualizar autor(es)": {
+                                    "value": {
+                                        "authors": "Luísa Coelho"
+                                    }
+                                },
+                                "Atualizar capa do livro": {
+                                    "value": {
+                                        "imgBook": "https://static.fnac-static.com/multimedia/Images/PT/NR/b4/84/28/2655412/1540-1.jpg"
+                                    }
+                                },
+                                "Atualizar imagem de fundo": {
+                                    "value": {
+                                        "imgBackground": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/255px-Flag_of_Portugal.svg.png"
+                                    }
+                                },
+                                "Atualizar código": {
+                                    "value": {
+                                        "code": 5678
+                                    }
+                                },
+                                "Atualizar categoria": {
+                                    "value": {
+                                        "CategoryId": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "modules": {
+                "moduleName": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Módulo"
+                            },
+                            "examples": {
+                                "Módulo válido": {
+                                    "value": {
+                                        "moduleName": "Módulo X"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "activities": {},
+            "userBooks": {}
+        }
+    },
+    "tags": [
+        {
+            "name": "Utilizador",
+            "description": "Rotas para os utilizadores"
+        },
+        {
+            "name": "Notificação",
+            "description": "Rotas para as notificações dos utilizadores"
+        },
+        {
+            "name": "Nível",
+            "description": "Rotas para os níveis dos utilizadores"
+        },
+        {
+            "name": "Conquista",
+            "description": "Rotas para as conquistas dos utilizadores"
+        },
+        {
+            "name": "Categoria",
+            "description": "Rotas para as categorias dos livros"
+        },
+        {
+            "name": "Tipo de Atividade",
+            "description": "Rotas para os tipos de atividade dos exercícios/atividades"
+        },
+        {
+            "name": "Livro",
+            "description": "Rotas para os livros"
+        },
+        {
+            "name": "Módulo",
+            "description": "Rotas para os módulos dos livros"
+        },
+        {
+            "name": "Atividade",
+            "description": "Rotas para as atividades dos módulos"
+        },
+        {
+            "name": "Livros do Utilizador",
+            "description": "Rotas para os livros do utilizador"
+        },
+        {
+            "name": "Rotas Públicas - Autenticação",
+            "description": "Rotas de acesso público para autenticação do utilizador"
+        },
+        {
+            "name": "Rotas Privadas - Geral",
+            "description": "Rotas de acesso para utilizador regular e administrador"
+        },
+        {
+            "name": "Rotas Privadas - Utilizador Regular",
+            "description": "Rotas de acesso apenas para utilizador regular"
+        },
+        {
+            "name": "Rotas Privadas - Utilizador Administrador",
+            "description": "Rotas de acesso apenas para utilizador administrador"
+        }
+    ],
+    "paths": {
+        "/users/register": {
+            "post": {
+                "summary": "Registar utilizador regular",
+                "description": "Adiciona um utilizador à base de dados da aplicação",
+                "operationId": "register",
+                "tags": [
+                    "Utilizador",
+                    "Rotas Públicas - Autenticação"
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/users/register_regular_user"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/users/201/register"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/users/400/register"
+                    },
+                    "406": {
+                        "$ref": "#/components/responses/users/406/register"
+                    }
+                }
+            }
+        },
+        "/users/login": {
+            "post": {
+                "summary": "Login do utilizador",
+                "description": "Devolve um token de acesso para o uso da aplicação e o tipo de utilizador",
+                "operationId": "login",
+                "tags": [
+                    "Utilizador",
+                    "Rotas Públicas - Autenticação"
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/users/login"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/users/200/login"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/users/400/login"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/users/401/login"
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "summary": "Lista de utilizadores",
+                "description": "Devolve uma lista de utilizadores da aplicação",
+                "operationId": "findAllUsers",
+                "tags": [
+                    "Utilizador",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/users/200/findAllUsers"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Criar utilizadores administradores",
+                "description": "Adiciona um utilizador à base de dados da aplicação",
+                "operationId": "createAdminUser",
+                "tags": [
+                    "Utilizador",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/users/register_admin_user"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/users/201/createAdminUser"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/users/400/createAdminUser"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    }
+                }
+            }
+        },
+        "/users/me": {
+            "get": {
+                "summary": "Perfil do utilizador",
+                "description": "Devolve a informação do perfil do utilizador",
+                "operationId": "getProfile",
+                "tags": [
+                    "Utilizador",
+                    "Rotas Privadas - Geral"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/users/200/getProfile"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Atualizar o perfil",
+                "description": "Atualiza certos campos da informação do utilizador",
+                "operationId": "updateProfile",
+                "tags": [
+                    "Utilizador",
+                    "Rotas Privadas - Geral"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/users/updateProfile"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/users/200/updateProfile"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/users/400/updateProfile"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    }
+                }
+            }
+        },
+        "/users/me/notifications": {
+            "get": {
+                "summary": "Notificações do utilizador",
+                "description": "Devolve uma lista de notificações do utilizador",
+                "operationId": "findProfileNotifications",
+                "tags": [
+                    "Notificação",
+                    "Rotas Privadas - Utilizador Regular"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/notifications/200/findProfileNotifications"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    }
+                }
+            }
+        },
+        "/users/me/notifications/{idNotification}": {
+            "delete": {
+                "summary": "Apagar notificações",
+                "description": "Apaga uma notificação pelo id",
+                "operationId": "deleteProfileNotification",
+                "tags": [
+                    "Notificação",
+                    "Rotas Privadas - Utilizador Regular"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idNotification"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/notifications/200/deleteProfileNotification"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idNotification"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idNotification"
+                    }
+                }
+            }
+        },
+        "/users/{idUser}": {
+            "get": {
+                "summary": "Procurar um utilizador",
+                "description": "Devolve a informação de um utilizador pelo id",
+                "operationId": "findOneUser",
+                "tags": [
+                    "Utilizador",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idUser"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/users/200/findOneUser"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idUser"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idUser"
+                    }
+                }
+            }
+        },
+        "/levels": {
+            "get": {
+                "summary": "Lista de níveis",
+                "description": "Devolve uma lista de níveis da aplicação",
+                "operationId": "findAllLevels",
+                "tags": [
+                    "Nível",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/levels/200/findAllLevels"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Criar níveis",
+                "description": "Adiciona um nível à base de dados da aplicação",
+                "operationId": "createLevel",
+                "tags": [
+                    "Nível",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/levels/createLevel"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/levels/201/createLevel"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/levels/400/createLevel"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    }
+                }
+            }
+        },
+        "/levels/{idLevel}": {
+            "get": {
+                "summary": "Procurar um nível",
+                "description": "Devolve a informação de um ranking pelo nível do id. Enquanto o administrador pode ver todos os níveis, o utilizador só pode ver o seu atual",
+                "operationId": "findOneLevelRanking",
+                "tags": [
+                    "Nível",
+                    "Rotas Privadas - Geral"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idLevel"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/levels/200/findOneLevelRanking"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idLevel"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "description": "Não autorizado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Utilizador - Nível Inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Não é possível ver o ranking de um nível além do atual!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idLevel"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Atualizar o nível",
+                "description": "Atualiza alguns campos do nível",
+                "operationId": "updateLevel",
+                "tags": [
+                    "Nível",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idLevel"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/levels/updateLevel"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/levels/200/updateLevel"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/levels/400/updateLevel"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idLevel"
+                    }
+                }
+            }
+        },
+        "/achievements": {
+            "get": {
+                "summary": "Lista de conquistas",
+                "description": "Devolve uma lista de conquistas de acordo com o tipo de utilizador que está a fazer o pedido",
+                "operationId": "findAllAchievements",
+                "tags": [
+                    "Conquista",
+                    "Rotas Privadas - Geral"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/achievements/200/findAllAchievements"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Criar conquistas",
+                "description": "Adiciona uma conquista à base de dados da aplicação",
+                "operationId": "createAchievement",
+                "tags": [
+                    "Conquista",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/achievements/createAchievement"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/achievements/201/createAchievement"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/achievements/400/createAchievement"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "406": {
+                        "$ref": "#/components/responses/achievements/406/achievementName"
+                    }
+                }
+            }
+        },
+        "/achievements/{idAchievement}": {
+            "get": {
+                "summary": "Procurar uma conquista",
+                "description": "Devolve a informação de uma conquista pelo id",
+                "operationId": "findOneAchievement",
+                "tags": [
+                    "Conquista",
+                    "Rotas Privadas - Geral"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idAchievement"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/achievements/200/findOneAchievement"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idAchievement"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idAchievement"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Atualizar a conquista",
+                "description": "Atualiza alguns campos da conquista",
+                "operationId": "updateAchievement",
+                "tags": [
+                    "Conquista",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idAchievement"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/achievements/updateAchievement"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/achievements/200/updateAchievement"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/achievements/400/updateAchievement"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idAchievement"
+                    },
+                    "406": {
+                        "$ref": "#/components/responses/achievements/406/achievementName"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Apagar conquistas",
+                "description": "Apaga uma conquista pelo id",
+                "operationId": "deleteAchievement",
+                "tags": [
+                    "Conquista",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idAchievement"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/achievements/200/deleteAchievement"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idAchievement"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idAchievement"
+                    }
+                }
+            }
+        },
+        "/categories": {
+            "get": {
+                "summary": "Lista de categorias",
+                "description": "Devolve uma lista de categorias da aplicação",
+                "operationId": "findAllCategories",
+                "tags": [
+                    "Categoria",
+                    "Rotas Privadas - Geral"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/categories/200/findAllCategories"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Criar categorias",
+                "description": "Adiciona uma categoria à base de dados da aplicação",
+                "operationId": "createCategory",
+                "tags": [
+                    "Categoria",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/categories/categoryName"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/categories/201/createCategory"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/categories/400/createCategory"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "406": {
+                        "$ref": "#/components/responses/categories/406/categoryName"
+                    }
+                }
+            }
+        },
+        "/categories/{idCategory}": {
+            "patch": {
+                "summary": "Atualizar a categoria",
+                "description": "Atualiza alguns campos da categoria",
+                "operationId": "updateCategory",
+                "tags": [
+                    "Categoria",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idCategory"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/categories/categoryName"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/categories/200/updateCategory"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/categories/400/updateCategory"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idCategory"
+                    },
+                    "406": {
+                        "$ref": "#/components/responses/categories/406/categoryName"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Apagar categorias",
+                "description": "Apaga uma categoria pelo id",
+                "operationId": "deleteCategory",
+                "tags": [
+                    "Categoria",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idCategory"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/categories/200/deleteCategory"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/categories/400/deleteCategory"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idCategory"
+                    }
+                }
+            }
+        },
+        "/activityTypes": {
+            "get": {
+                "summary": "Lista de tipos de atividade",
+                "description": "Devolve uma lista de tipos de atividade da aplicação",
+                "operationId": "findAllTypes",
+                "tags": [
+                    "Tipo de Atividade",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/types/200/findAllTypes"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Criar tipos de atividade",
+                "description": "Adiciona um tipo de atividade à base de dados da aplicação",
+                "operationId": "createType",
+                "tags": [
+                    "Tipo de Atividade",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/types/typeName"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/types/201/createType"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/types/400/createType"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "406": {
+                        "$ref": "#/components/responses/types/406/typeName"
+                    }
+                }
+            }
+        },
+        "/activityTypes/{idType}": {
+            "patch": {
+                "summary": "Atualizar o tipo de atividade",
+                "description": "Atualiza alguns campos do tipo de atividade",
+                "operationId": "updateType",
+                "tags": [
+                    "Tipo de Atividade",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idType"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/types/typeName"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/types/200/updateType"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/types/400/updateType"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idType"
+                    },
+                    "406": {
+                        "$ref": "#/components/responses/types/406/typeName"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Apagar tipos de atividade",
+                "description": "Apaga um tipo de atividade pelo id",
+                "operationId": "deleteType",
+                "tags": [
+                    "Tipo de Atividade",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idType"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/types/200/deleteType"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/types/400/deleteType"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idType"
+                    }
+                }
+            }
+        },
+        "/books": {
+            "get": {
+                "summary": "Lista de livros",
+                "description": "Devolve uma lista de livros",
+                "operationId": "findAllBooks",
+                "tags": [
+                    "Livro",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/bookCategory"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/books/200/findAllBooks"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idCategory"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Criar livros",
+                "description": "Adiciona um livro à base de dados da aplicação",
+                "operationId": "createBook",
+                "tags": [
+                    "Livro",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/books/createBook"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/books/201/createBook"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/books/400/createBook"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "406": {
+                        "$ref": "#/components/responses/books/406/name_code"
+                    }
+                }
+            }
+        },
+        "/books/{idBook}": {
+            "get": {
+                "summary": "Procurar um livro",
+                "description": "Devolve a informação de um livro pelo id",
+                "operationId": "findOneBook",
+                "tags": [
+                    "Livro",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/books/200/findOneBook"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idBook"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idBook"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Atualizar o livro",
+                "description": "Atualiza alguns campos do livro",
+                "operationId": "updateBook",
+                "tags": [
+                    "Livro",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/books/updateBook"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/books/200/updateBook"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/books/400/updateBook"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idBook"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Apagar livros",
+                "description": "Apaga um livro pelo id",
+                "operationId": "deleteBook",
+                "tags": [
+                    "Livro",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/books/200/deleteBook"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idBook"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idBook"
+                    }
+                }
+            }
+        },
+        "/books/{idBook}/modules": {
+            "get": {
+                "summary": "Lista de módulos de um livro",
+                "description": "Devolve uma lista de módulos de acordo com o livro",
+                "operationId": "findAllBookModules",
+                "tags": [
+                    "Módulo",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/modules/200/findAllBookModules"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idBook"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idBook"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Criar módulos",
+                "description": "Adiciona um módulo à base de dados da aplicação",
+                "operationId": "createBookModule",
+                "tags": [
+                    "Módulo",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/modules/moduleName"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/modules/201/createBookModule"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/modules/400/createBookModule"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idBook"
+                    }
+                }
+            }
+        },
+        "/books/{idBook}/modules/{idModule}": {
+            "patch": {
+                "summary": "Atualizar o módulo",
+                "description": "Atualiza alguns campos do módulo",
+                "operationId": "updateBookModule",
+                "tags": [
+                    "Módulo",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idModule"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/modules/moduleName"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/modules/200/updateBookModule"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/modules/400/updateBookModule"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/book_module"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Apagar módulos",
+                "description": "Apaga um módulo pelo id",
+                "operationId": "deleteBookModule",
+                "tags": [
+                    "Módulo",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idModule"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/modules/200/deleteBookModule"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/modules/400/deleteBookModule"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/book_module"
+                    }
+                }
+            }
+        }
+    }
+}

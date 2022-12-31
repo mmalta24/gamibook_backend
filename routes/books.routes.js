@@ -40,16 +40,14 @@ router.route("/")
         },
         verifyToken, booksController.findAllBooks)
     .post([
-            body("name").trim().notEmpty().isString().withMessage("Insira o nome do livro!"),
-            body("imgBook").trim().notEmpty().isURL().withMessage("Insira a capa do livro!"),
-            body("imgBackground").trim().notEmpty().isURL().withMessage("Insira a imagem de fundo!"),
-            body("code").isNumeric().withMessage("Insira um código do livro!")
-            .isLength({
-                min: 4,
-                max: 4
-            }).withMessage("O código necessita de ter 4 digitos!"),
-            body("CategoryId").isNumeric().withMessage("Insira uma categoria!")
-        ],
+        body("name").trim().notEmpty().isString().withMessage("Insira o nome do livro!"),
+        body("authors").trim().notEmpty().isString().withMessage("Insira o(s) autor(es) do livro!"),
+        body("imgBook").trim().notEmpty().isURL().withMessage("Insira a capa do livro!"),
+        body("imgBackground").trim().notEmpty().isURL().withMessage("Insira a imagem de fundo!").optional(),
+        body("code").isNumeric().withMessage("Insira o código do livro!")
+            .isInt({ min: 1000, max: 9999 }).withMessage("O código necessita de ter 4 digitos!"),
+        body("CategoryId").isNumeric().withMessage("Insira uma categoria!")
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -80,10 +78,7 @@ router.route("/:idBook")
         body("imgBook").trim().notEmpty().isURL().withMessage("Insira a capa do livro!").optional(),
         body("imgBackground").trim().notEmpty().isURL().withMessage("Insira a imagem de fundo!").optional(),
         body("code").isNumeric().withMessage("Insira um código do livro!")
-        .isLength({
-            min: 4,
-            max: 4
-        }).withMessage("O código necessita de ter 4 digitos!").optional(),
+            .isInt({ min: 1000, max: 9999 }).withMessage("O código necessita de ter 4 digitos!").optional(),
         body("CategoryId").isNumeric().withMessage("Insira uma categoria!").optional(),
         (req, res, next) => {
             const errors = validationResult(req);
@@ -123,9 +118,9 @@ router.route("/:idBook/modules")
             }
         }, verifyToken, booksController.findAllBookModules)
     .post([
-            param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
-            body("moduleName").trim().notEmpty().isString().withMessage("Insira o nome do módulo!"),
-        ],
+        param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
+        body("moduleName").trim().notEmpty().isString().withMessage("Insira o nome do módulo!"),
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -139,10 +134,10 @@ router.route("/:idBook/modules")
 
 router.route("/:idBook/modules/:idModule")
     .patch([
-            param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
-            param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
-            body("moduleName").trim().notEmpty().isString().withMessage("Insira o nome do módulo!")
-        ],
+        param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
+        param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
+        body("moduleName").trim().notEmpty().isString().withMessage("Insira o nome do módulo!")
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -154,9 +149,9 @@ router.route("/:idBook/modules/:idModule")
             }
         }, verifyToken, booksController.updateBookModule)
     .delete([
-            param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
-            param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
-        ],
+        param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
+        param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -171,9 +166,9 @@ router.route("/:idBook/modules/:idModule")
 // BOOK MODULE ACTIVITIES
 router.route("/:idBook/modules/:idModule/activities")
     .get([
-            param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
-            param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
-        ],
+        param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
+        param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -185,18 +180,18 @@ router.route("/:idBook/modules/:idModule/activities")
             }
         }, verifyToken, booksController.findAllBookModuleActivities)
     .post([
-            param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
-            param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
-            body("name").trim().notEmpty().isString().withMessage("Insira o nome da atividade!"),
-            body("title").trim().notEmpty().isString().withMessage("Insira o enunciado da atividade!"),
-            body("question").trim().notEmpty().isString().withMessage("Insira a questão!"),
-            body("example").trim().notEmpty().isString().withMessage("Insira um exemplo!"),
-            body("options").trim().notEmpty().isString().withMessage("Insira as opções!").optional(),
-            body("correctAnswer").trim().notEmpty().isString().withMessage("Insira as opções!"),
-            body("points").isNumeric().withMessage("Insira a quantidade de pontos!"),
-            body("imgBackground").trim().notEmpty().isString().withMessage("Insira a imagem de fundo!"),
-            body("ActivityTypeId").isNumeric().withMessage("Insira o tipo de atividade!")
-        ],
+        param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
+        param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
+        body("name").trim().notEmpty().isString().withMessage("Insira o nome da atividade!"),
+        body("title").trim().notEmpty().isString().withMessage("Insira o enunciado da atividade!"),
+        body("question").trim().notEmpty().isString().withMessage("Insira a questão!"),
+        body("example").trim().notEmpty().isString().withMessage("Insira um exemplo!").optional(),
+        body("options").trim().notEmpty().isString().withMessage("Insira as opções!"),
+        body("correctAnswer").trim().notEmpty().isString().withMessage("Insira as opções!"),
+        body("points").isNumeric().withMessage("Insira a quantidade de pontos!"),
+        body("imgBackground").trim().notEmpty().isString().withMessage("Insira a imagem de fundo!"),
+        body("ActivityTypeId").isNumeric().withMessage("Insira o tipo de atividade!")
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -210,10 +205,10 @@ router.route("/:idBook/modules/:idModule/activities")
 
 router.route("/:idBook/modules/:idModule/activities/:idActivity")
     .get([
-            param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
-            param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
-            param("idActivity").isNumeric().withMessage("Insira um número no id da atividade!"),
-        ],
+        param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
+        param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
+        param("idActivity").isNumeric().withMessage("Insira um número no id da atividade!"),
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -225,18 +220,18 @@ router.route("/:idBook/modules/:idModule/activities/:idActivity")
             }
         }, verifyToken, booksController.findOneBookModuleActivity)
     .patch([
-            param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
-            param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
-            param("idActivity").isNumeric().withMessage("Insira um número no id da atividade!"),
-            body("name").trim().notEmpty().isString().withMessage("Insira o nome da atividade!").optional(),
-            body("question").trim().notEmpty().isString().withMessage("Insira a questão!").optional(),
-            body("example").trim().notEmpty().isString().withMessage("Insira um exemplo!").optional(),
-            body("options").trim().notEmpty().isString().withMessage("Insira as opções!").optional(),
-            body("correctAnswer").trim().notEmpty().isString().withMessage("Insira as opções!").optional(),
-            body("points").isNumeric().withMessage("Insira a quantidade de pontos!").optional(),
-            body("imgBackground").trim().notEmpty().isString().withMessage("Insira a imagem de fundo!").optional(),
-            body("ActivityTypeId").isNumeric().withMessage("Insira o tipo de atividade!").optional()
-        ],
+        param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
+        param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
+        param("idActivity").isNumeric().withMessage("Insira um número no id da atividade!"),
+        body("name").trim().notEmpty().isString().withMessage("Insira o nome da atividade!").optional(),
+        body("question").trim().notEmpty().isString().withMessage("Insira a questão!").optional(),
+        body("example").trim().notEmpty().isString().withMessage("Insira um exemplo!").optional(),
+        body("options").trim().notEmpty().isString().withMessage("Insira as opções!").optional(),
+        body("correctAnswer").trim().notEmpty().isString().withMessage("Insira as opções!").optional(),
+        body("points").isNumeric().withMessage("Insira a quantidade de pontos!").optional(),
+        body("imgBackground").trim().notEmpty().isString().withMessage("Insira a imagem de fundo!").optional(),
+        body("ActivityTypeId").isNumeric().withMessage("Insira o tipo de atividade!").optional()
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -248,10 +243,10 @@ router.route("/:idBook/modules/:idModule/activities/:idActivity")
             }
         }, verifyToken, booksController.updateBookModuleActivity)
     .delete([
-            param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
-            param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
-            param("idActivity").isNumeric().withMessage("Insira um número no id da atividade!"),
-        ],
+        param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
+        param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
+        param("idActivity").isNumeric().withMessage("Insira um número no id da atividade!"),
+    ],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {

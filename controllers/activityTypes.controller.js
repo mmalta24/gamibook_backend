@@ -56,7 +56,7 @@ exports.createType = async (req, res) => {
 
         return res.status(201).json({
             success: true,
-            msg: "Tipo de atividade criada!",
+            msg: "Tipo de atividade criado!",
             uri: `/activityTypes/${newType.id}`
         });
     } catch (err) {
@@ -87,7 +87,20 @@ exports.updateType = async (req, res) => {
         if (!activityType) {
             return res.status(404).json({
                 success: false,
-                msg: "Tipo de atividade não encontrada!"
+                msg: "Tipo de atividade não encontrado!"
+            });
+        }
+
+        const typeFound = await ActivityType.findOne({
+            where: trimObjectStrings({
+                name: req.body.name
+            })
+        });
+
+        if (typeFound) {
+            return res.status(406).json({
+                success: false,
+                msg: "Já existe um tipo de atividade com esse nome!"
             });
         }
 
@@ -101,7 +114,7 @@ exports.updateType = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "Tipo de atividade atualizada!"
+            msg: "Tipo de atividade atualizado!"
         });
     } catch (err) {
         if (err instanceof ValidationError) {
@@ -131,7 +144,7 @@ exports.deleteType = async (req, res) => {
         if (!activityType) {
             return res.status(404).json({
                 success: false,
-                msg: "Tipo de atividade não encontrada!"
+                msg: "Tipo de atividade não encontrado!"
             });
         }
 

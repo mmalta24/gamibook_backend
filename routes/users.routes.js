@@ -72,20 +72,20 @@ router.post("/login", [
 router.route("/me")
     .get(verifyToken, usersController.getProfile)
     .patch([oneOf( // one of the following must exist
-            [
-                body("password").trim().notEmpty().isString().withMessage("Insira um password!"),
-                body("avatar").isString().withMessage("Insira um avatar!"), // it can be emppty since user can use level avatar
-            ],
-        )], function (req, res, next) {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({
-                    errors: errors.array()
-                });
-            } else {
-                next();
-            }
-        },
+        [
+            body("password").trim().notEmpty().isString().withMessage("Insira uma password!"),
+            body("avatar").isString().withMessage("Insira um avatar!"), // it can be emppty since user can use level avatar
+        ],
+    )], function (req, res, next) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                errors: errors.array()
+            });
+        } else {
+            next();
+        }
+    },
         verifyToken, usersController.updateProfile);
 
 router.route("/me/notifications")

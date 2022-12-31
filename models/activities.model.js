@@ -28,16 +28,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         example: {
             type: DataTypes.STRING,
-            allowNull: false,
-            notEmpty: true,
-            validate: {
-                notNull: {
-                    msg: "Exemplo não pode estar vazio!"
-                },
-                notEmpty: {
-                    msg: "Exemplo não pode estar vazio!"
-                }
-            }
         },
         question: {
             type: DataTypes.STRING,
@@ -91,6 +81,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
             notEmpty: true,
+            defaultValue: "https://img.freepik.com/premium-photo/front-view-pile-books-with-copy-space_23-2148255858.jpg?w=2000",
             validate: {
                 notNull: {
                     msg: "Imagem de fundo não pode estar vazia!"

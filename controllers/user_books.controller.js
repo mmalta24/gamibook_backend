@@ -18,6 +18,8 @@ const BookModule = db.book_modules;
 const Activity = db.activity;
 const ActivityType = db.activity_type;
 const UserHistory = db.user_history;
+const Level = db.levels;
+const Achievement = db.achievements;
 
 exports.findAllBooks = async (req, res) => {
     if (req.typeUser === "admin") {
@@ -444,7 +446,25 @@ exports.updateBookModuleActivity = async (req, res) => {
         }
 
         if (req.body.answers === activity.correctAnswer) {
-            await User.update({ tickets: user.dataValues.tickets + 1 }, { where: { id: user.dataValues.id } })
+            const currLevel = await user.getLevel();
+            const nextLevel = await Level.findByPk(currLevel.dataValues.id + 1);
+            const newTotalPoints = user.dataValues.totalPoints + activity.dataValues.points;
+            await User.update({
+                tickets: user.dataValues.tickets + 1,
+                totalPoints: newTotalPoints,
+                LevelId: nextLevel && newTotalPoints >= nextLevel.dataValues.points ?
+                    nextLevel.dataValues.id : currLevel.dataValues.id
+            }, {
+                where: {
+                    id: user.dataValues.id
+                }
+            });
+
+            const allAchievements = await Achievement.findAll();
+            let userAchieved = allAchievements.map(achievement => achievement.dataValues)
+                .filter(ach => newTotalPoints >= ach.pointsNeeded);
+
+            await user.addAchievements(userAchieved.map(achievement => achievement.id))
         }
 
         await UserHistory.update(trimObjectStrings({

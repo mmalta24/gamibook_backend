@@ -20,6 +20,19 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
+        authors: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            notEmpty: true,
+            validate: {
+                notNull: {
+                    msg: "Os autores não podem estar vazios!"
+                },
+                notEmpty: {
+                    msg: "Os autores não podem estar vazios!"
+                }
+            }
+        },
         imgBook: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -37,6 +50,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
             notEmpty: true,
+            defaultValue: "https://t3.ftcdn.net/jpg/03/13/53/94/360_F_313539495_TIfAx53PwhMQopiuu7J1RiY2lVzSWrep.jpg",
             validate: {
                 notNull: {
                     msg: "Imagem de fundo não pode estar vazio!"
@@ -53,6 +67,8 @@ module.exports = (sequelize, DataTypes) => {
                 args: true,
                 msg: "Código de livro já existe!"
             },
+            min: 1000,
+            max: 9999,
             validate: {
                 isInt: {
                     msg: "O código de livro precisa de ser inteiro!"

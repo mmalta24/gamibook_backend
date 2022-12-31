@@ -8,13 +8,6 @@ const db = require("../models");
 const Category = db.categories;
 
 exports.findAllCategories = async (req, res) => {
-    if (req.typeUser !== "admin") {
-        return res.status(403).json({
-            success: false,
-            msg: "O seu tipo de utilizador não tem permissões para ver todas as categorias!",
-        });
-    }
-
     try {
         const categories = await Category.findAll();
 
@@ -88,6 +81,19 @@ exports.updateCategory = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 msg: "Categoria não encontrada!"
+            });
+        }
+
+        const categoryFind = await Category.findOne({
+            where: {
+                name: req.body.name
+            }
+        });
+
+        if (categoryFind) {
+            return res.status(406).json({
+                success: false,
+                msg: "Já existe uma categoria com esse nome!"
             });
         }
 

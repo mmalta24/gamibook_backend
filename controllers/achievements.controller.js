@@ -152,12 +152,21 @@ exports.updateAchievement = async (req, res) => {
 
         const data = cleanEmptyObjectKeys(trimObjectStrings(req.body));
 
-        if (!Object.keys(data).length) {
-            return res.status(400).json({
-                success: false,
-                msg: "Não tem informação para atualizar!"
+        if (data.name) {
+            const achievementFind = await Achievement.findOne({
+                where: {
+                    name: data.name
+                }
             });
+
+            if (achievementFind) {
+                return res.status(406).json({
+                    success: false,
+                    msg: "Já existe uma conquista com esse nome!"
+                });
+            }
         }
+
 
         await Achievement.update(data, {
             where: {

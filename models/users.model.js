@@ -59,6 +59,7 @@ module.exports = (sequelize, DataTypes) => {
         tickets: {
             type: DataTypes.INTEGER,
             defaultValue: 0,
+            min: 0,
             validate: {
                 isInt: {
                     msg: "O número de pontos precisa de ser inteiro!"
@@ -67,11 +68,18 @@ module.exports = (sequelize, DataTypes) => {
         },
         totalPoints: {
             type: DataTypes.INTEGER,
-            defaultValue: 0
+            defaultValue: 0,
+            min: 0,
+            validate: {
+                isInt: {
+                    msg: "O número de pontos precisa de ser inteiro!"
+                }
+            }
         },
         lastRanking: {
             type: DataTypes.INTEGER,
             allowNull: true,
+            min: 1,
             validate: {
                 isInt: {
                     msg: "O ranking anterior precisa de ser inteiro!"

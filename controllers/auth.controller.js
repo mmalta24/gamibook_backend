@@ -6,7 +6,7 @@ exports.verifyToken = (req, res, next) => {
     if (typeof header == "undefined")
         return res.status(401).json({
             success: false,
-            message: "Must be authenticated with a token to access this information!",
+            msg: "Precisa de estar autenticado com um token de acesso para aceder a essa informação!"
         });
     const bearer = header.split(" "); // Authorization: Bearer <token>
     const token = bearer[1];
@@ -18,7 +18,7 @@ exports.verifyToken = (req, res, next) => {
     } catch (err) {
         return res.status(401).json({
             success: false,
-            message: "Unauthorized!"
+            msg: "Não autorizado!"
         });
     }
 };
