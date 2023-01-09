@@ -186,10 +186,10 @@ router.route("/:idBook/modules/:idModule/activities")
         body("title").trim().notEmpty().isString().withMessage("Insira o enunciado da atividade!"),
         body("question").trim().notEmpty().isString().withMessage("Insira a questão!"),
         body("example").trim().notEmpty().isString().withMessage("Insira um exemplo!").optional(),
-        body("options").trim().notEmpty().isString().withMessage("Insira as opções!"),
-        body("correctAnswer").trim().notEmpty().isString().withMessage("Insira as opções!"),
+        body("options").trim().notEmpty().isString().withMessage("Insira as opções!").optional(),
+        body("correctAnswer").trim().notEmpty().isString().withMessage("Insira a opção correta!"),
         body("points").isNumeric().withMessage("Insira a quantidade de pontos!"),
-        body("imgBackground").trim().notEmpty().isString().withMessage("Insira a imagem de fundo!"),
+        body("imgBackground").trim().notEmpty().isString().withMessage("Insira a imagem de fundo!").optional(),
         body("ActivityTypeId").isNumeric().withMessage("Insira o tipo de atividade!")
     ],
         (req, res, next) => {

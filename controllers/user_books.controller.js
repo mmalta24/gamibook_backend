@@ -152,7 +152,7 @@ exports.findOneBook = async (req, res) => {
         if (!bookItem) {
             return res.status(404).json({
                 success: false,
-                msg: "Esse livro não está associado, portanto não é possível atualizar!"
+                msg: "Esse livro não está associado, portanto não é possível ver!"
             });
         }
 
@@ -180,9 +180,9 @@ exports.findOneBook = async (req, res) => {
         });
 
         /*
-            number_exercises - 100%
+            number_exercises - 1
             completed_exercises - x
-            completed_percentage = (completed_exercises * 100)/number_exercises
+            completed_percentage = (completed_exercises * 1)/number_exercises
         */
 
         const book = {
@@ -190,7 +190,7 @@ exports.findOneBook = async (req, res) => {
             name: bookItem.name,
             imgBook: bookItem.imgBook,
             imgBackground: bookItem.imgBackground,
-            completedPercentage: (history.length * 100) / activities.length,
+            completedPercentage: (history.length * 1) / activities.length,
             modules: modules.map(module => {
                 return {
                     ...module.dataValues,
@@ -325,7 +325,7 @@ exports.findOneBookModuleActivity = async (req, res) => {
         if (!books.find(book => book.id === +req.params.idBook)) {
             return res.status(404).json({
                 success: false,
-                msg: "Esse livro não está associado, portanto não é possível atualizar!"
+                msg: "Esse livro não está associado, portanto não é possível ver!"
             });
         }
 
@@ -366,11 +366,16 @@ exports.findOneBookModuleActivity = async (req, res) => {
 
         const type = await ActivityType.findByPk(activity.ActivityTypeId);
 
+        const history = await UserHistory.findOne({
+            where: { UserId: req.userId, ActivityId: activity.id }
+        });
+
         return res.status(200).json({
             success: true,
             activity: {
                 ...activity,
-                activityType: type.name
+                activityType: type.name,
+                answers: history.answers
             }
         });
     } catch (err) {
@@ -441,7 +446,7 @@ exports.updateBookModuleActivity = async (req, res) => {
         if (history.answers === activity.correctAnswer) {
             return res.status(400).json({
                 success: false,
-                msg: "Não pode resolver um exercício que já está completo"
+                msg: "Não pode resolver um exercício que já está completo!"
             });
         }
 

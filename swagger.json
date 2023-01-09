@@ -338,6 +338,10 @@
                         "type": "integer",
                         "description": "Quantidade de pontos que a atividade dá ao utilizador"
                     },
+                    "imgBackground": {
+                        "type": "string",
+                        "description": "Imagem de fundo mostrada na execução da atividade"
+                    },
                     "BookModuleId": {
                         "type": "integer",
                         "description": "Módulo ao qual a atividade está associada",
@@ -607,6 +611,12 @@
                     "value": {
                         "success": false,
                         "msg": "Insira um número no id do livro!"
+                    }
+                },
+                "noBookInLibrary": {
+                    "value": {
+                        "success": false,
+                        "msg": "Esse livro não está associado, portanto não é possível ver/atualizar/apagar!"
                     }
                 }
             },
@@ -891,6 +901,60 @@
                                 }
                             }
                         }
+                    },
+                    "idBook_idModule": {
+                        "description": "Caminho inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido - Livro": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do livro!"
+                                        }
+                                    },
+                                    "Id inválido - Módulo": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do módulo!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "idBook_idModule_idActivity": {
+                        "description": "Caminho inválido",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido - Livro": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do livro!"
+                                        }
+                                    },
+                                    "Id inválido - Módulo": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do módulo!"
+                                        }
+                                    },
+                                    "Id inválido - Atividade": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id da atividade!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 "401": {
@@ -1066,14 +1130,20 @@
                             }
                         }
                     },
-                    "idModule": {
-                        "description": "Módulo não encontrado",
+                    "idBook_idModule": {
+                        "description": "Campos não encontrados",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object"
                                 },
                                 "examples": {
+                                    "Livro inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Livro não encontrado!"
+                                        }
+                                    },
                                     "Módulo inexistente": {
                                         "value": {
                                             "success": false,
@@ -1084,14 +1154,26 @@
                             }
                         }
                     },
-                    "idActivity": {
-                        "description": "Atividade não encontrada",
+                    "idBook_idModule_idActivity": {
+                        "description": "Campos não encontrados",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "type": "object"
                                 },
                                 "examples": {
+                                    "Livro inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Livro não encontrado!"
+                                        }
+                                    },
+                                    "Módulo inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Módulo não encontrado!"
+                                        }
+                                    },
                                     "Atividade inexistente": {
                                         "value": {
                                             "success": false,
@@ -1102,7 +1184,7 @@
                             }
                         }
                     },
-                    "book_module": {
+                    "idBook_idModule_idActivity_user": {
                         "description": "Campos não encontrados",
                         "content": {
                             "application/json": {
@@ -1110,11 +1192,20 @@
                                     "type": "object"
                                 },
                                 "examples": {
-                                    "Livro inexistente": {
-                                        "$ref": "#/components/examples/books/invalid_id"
+                                    "Livro não está na biblioteca": {
+                                        "$ref": "#/components/examples/books/noBookInLibrary"
                                     },
                                     "Módulo inexistente": {
-                                        "$ref": "#/components/examples/modules/invalid_id"
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Módulo não encontrado!"
+                                        }
+                                    },
+                                    "Atividade inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Atividade não encontrada!"
+                                        }
                                     }
                                 }
                             }
@@ -2493,6 +2584,564 @@
                         }
                     }
                 }
+            },
+            "activities": {
+                "200": {
+                    "findAllBookModuleActivities": {
+                        "description": "Lista de atividades do módulo do livro",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Atividade"
+                                },
+                                "examples": {
+                                    "Lista": {
+                                        "value": {
+                                            "success": true,
+                                            "activities": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "Atividade A",
+                                                    "title": "Complete os espaços com a conjugação dos exercícios com os verbos que acabam em -ar.",
+                                                    "example": "Amar - A Mariana ama o João.",
+                                                    "question": [
+                                                        "Pensar - Eu _ muito.",
+                                                        "Falar - Tu _ Português.",
+                                                        "Morar - Eles _ em Lisboa."
+                                                    ],
+                                                    "options": [
+                                                        [
+                                                            "penso",
+                                                            "pensas",
+                                                            "pensamos"
+                                                        ],
+                                                        [
+                                                            "falais",
+                                                            "falas",
+                                                            "fala"
+                                                        ],
+                                                        [
+                                                            "moram",
+                                                            "moramos",
+                                                            "moro"
+                                                        ]
+                                                    ],
+                                                    "correctAnswer": [
+                                                        "penso",
+                                                        "falas",
+                                                        "moram"
+                                                    ],
+                                                    "points": 150,
+                                                    "imgBackground": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/255px-Flag_of_Portugal.svg.png",
+                                                    "BookModuleId": 1,
+                                                    "ActivityTypeId": 3,
+                                                    "activityType": "Completar Espaços"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "findOneBookModuleActivity": {
+                        "description": "Lista de atividades do módulo do livro",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Atividade"
+                                },
+                                "examples": {
+                                    "Atividade": {
+                                        "value": {
+                                            "success": true,
+                                            "activity": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "Atividade A",
+                                                    "title": "Complete os espaços com a conjugação dos exercícios com os verbos que acabam em -ar.",
+                                                    "example": "Amar - A Mariana ama o João.",
+                                                    "question": [
+                                                        "Pensar - Eu _ muito.",
+                                                        "Falar - Tu _ Português.",
+                                                        "Morar - Eles _ em Lisboa."
+                                                    ],
+                                                    "options": [
+                                                        [
+                                                            "penso",
+                                                            "pensas",
+                                                            "pensamos"
+                                                        ],
+                                                        [
+                                                            "falais",
+                                                            "falas",
+                                                            "fala"
+                                                        ],
+                                                        [
+                                                            "moram",
+                                                            "moramos",
+                                                            "moro"
+                                                        ]
+                                                    ],
+                                                    "correctAnswer": [
+                                                        "penso",
+                                                        "falas",
+                                                        "moram"
+                                                    ],
+                                                    "points": 150,
+                                                    "imgBackground": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/255px-Flag_of_Portugal.svg.png",
+                                                    "BookModuleId": 1,
+                                                    "ActivityTypeId": 3,
+                                                    "activityType": "Completar Espaços"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateBookModuleActivity": {
+                        "description": "Informação atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Informação atualizada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Tipo de atividade atualizado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "deleteBookModuleActivity": {
+                        "description": "Tipo de atividade apagado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Tipo de atividade apagado": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Tipo de atividade apagado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "201": {
+                    "createBookModuleActivity": {
+                        "description": "Atividade criada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Atividade válida": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Atividade criada!",
+                                            "uri": "/books/{idBook}/modules/{idModule}/activities/{idActivity}"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "createBookModuleActivity": {
+                        "description": "Campos vazios ou inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido - Livro": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do livro!"
+                                        }
+                                    },
+                                    "Id inválido - Módulo": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do módulo!"
+                                        }
+                                    },
+                                    "Nome inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira o nome da atividade!"
+                                        }
+                                    },
+                                    "Título inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira o enunciado da atividade!"
+                                        }
+                                    },
+                                    "Questão inválida": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira a questão!"
+                                        }
+                                    },
+                                    "Opções inválidas": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira as opções!"
+                                        }
+                                    },
+                                    "Resposta certa inválida": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira a opção correta!"
+                                        }
+                                    },
+                                    "Pontos inválidos": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira a quantidade de pontos!"
+                                        }
+                                    },
+                                    "Tipo de atividade inválido": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira o tipo de atividade!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateBookModuleActivity": {
+                        "description": "Campos vazios",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Campos vazios": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Não tem informação para atualizar!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "userBooks": {
+                "200": {
+                    "findAllBooks": {
+                        "description": "Lista de livros",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Livro"
+                                },
+                                "examples": {
+                                    "Lista": {
+                                        "value": {
+                                            "success": true,
+                                            "books": [
+                                                {
+                                                    "id": 1,
+                                                    "name": "Português Em Foco 1",
+                                                    "imgBook": "https://static.fnac-static.com/multimedia/Images/PT/NR/7b/f8/5b/6027387/1540-1.jpg",
+                                                    "imgBackground": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/255px-Flag_of_Portugal.svg.png",
+                                                    "CategoryId": 1,
+                                                    "category": "PLNM",
+                                                    "liked": false,
+                                                    "rating": 0
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "findOneBook": {
+                        "description": "Livro por determinado id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Livro"
+                                },
+                                "examples": {
+                                    "Livro": {
+                                        "value": {
+                                            "success": true,
+                                            "book": {
+                                                "id": 1,
+                                                "name": "Português Em Foco 1",
+                                                "imgBook": "https://static.fnac-static.com/multimedia/Images/PT/NR/7b/f8/5b/6027387/1540-1.jpg",
+                                                "imgBackground": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/255px-Flag_of_Portugal.svg.png",
+                                                "completedPercentage": 0.2,
+                                                "modules": [
+                                                    {
+                                                        "id": 1,
+                                                        "moduleName": "Eu trabalho em casa com o meu colega.",
+                                                        "BookId": 1,
+                                                        "activities": [
+                                                            {
+                                                                "name": "Verbos em -ar",
+                                                                "completed": true
+                                                            }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateBook": {
+                        "description": "Informação atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Informação atualizada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Livro atualizado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "deleteBook": {
+                        "description": "Livro apagado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Livro apagado": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Livro apagado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "findOneBookModuleActivity": {
+                        "description": "Atividade por determinado id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Atividade"
+                                },
+                                "examples": {
+                                    "Atividade": {
+                                        "value": {
+                                            "success": true,
+                                            "activity": {
+                                                "id": 1,
+                                                "name": "Verbos em -ar",
+                                                "title": "Complete os espaços com a conjugação dos exercícios com os verbos que acabam em -ar.",
+                                                "example": "Amar - A Mariana ama o João.",
+                                                "question": [
+                                                    "Pensar - Eu _ muito.",
+                                                    "Falar - Tu _ Português.",
+                                                    "Morar - Eles _ em Lisboa."
+                                                ],
+                                                "options": [
+                                                    [
+                                                        "penso",
+                                                        "pensas",
+                                                        "pensamos"
+                                                    ],
+                                                    [
+                                                        "falais",
+                                                        "falas",
+                                                        "fala"
+                                                    ],
+                                                    [
+                                                        "moram",
+                                                        "moramos",
+                                                        "moro"
+                                                    ]
+                                                ],
+                                                "correctAnswer": [
+                                                    "penso",
+                                                    "falas",
+                                                    "moram"
+                                                ],
+                                                "points": 150,
+                                                "imgBackground": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Flag_of_Portugal.svg/255px-Flag_of_Portugal.svg.png",
+                                                "BookModuleId": 1,
+                                                "ActivityTypeId": 3,
+                                                "activityType": "Completar Espaços",
+                                                "answers": "penso/falas/moram"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateBookModuleActivity": {
+                        "description": "Informação atualizada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Informação atualizada": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Atividade atualizada!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "201": {
+                    "createBook": {
+                        "description": "Livro adicionado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "body"
+                                },
+                                "examples": {
+                                    "Código válido": {
+                                        "value": {
+                                            "success": true,
+                                            "msg": "Livro adicionado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    "createBook": {
+                        "description": "Campos vazios ou inválidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Falta código": {
+                                        "$ref": "#/components/examples/books/missing_code"
+                                    },
+                                    "Código inválido": {
+                                        "$ref": "#/components/examples/books/invalid_code"
+                                    },
+                                    "Livro já adicionado": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "O livro já foi adicionado!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "updateBookModuleActivity": {
+                        "description": "Caminho inválido ou operação inválida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Id inválido - Livro": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do livro!"
+                                        }
+                                    },
+                                    "Id inválido - Módulo": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id do módulo!"
+                                        }
+                                    },
+                                    "Id inválido - Atividade": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número no id da atividade!"
+                                        }
+                                    },
+                                    "Resposta não permitida": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Não pode resolver um exercício que já está completo!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "404": {
+                    "createBook": {
+                        "description": "Código não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Código inexistente": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Não existe um livro com esse código!"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "bookNotFound": {
+                        "description": "Livro não encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                },
+                                "examples": {
+                                    "Livro não está na biblioteca": {
+                                        "$ref": "#/components/examples/books/noBookInLibrary"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "requestBodies": {
@@ -2797,8 +3446,134 @@
                     }
                 }
             },
-            "activities": {},
-            "userBooks": {}
+            "activities": {
+                "createBookModuleActivity": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Atividade"
+                            },
+                            "examples": {
+                                "Atividade válida - tipo Verdadeiro ou Falso": {
+                                    "value": {
+                                        "name": "Atividade A",
+                                        "title": "Indique se a afirmação é verdadeira ou falsa",
+                                        "question": "Conjugação do verbo ser: sou, és, é, somos, sois, são.",
+                                        "options": "Verdadeiro,Falso",
+                                        "correctAnswer": "Verdadeiro",
+                                        "points": 10,
+                                        "ActivityTypeId": 1
+                                    }
+                                },
+                                "Atividade válida - tipo Escolha Múltipla": {
+                                    "value": {
+                                        "name": "Atividade B",
+                                        "title": "Responda corretamente à pergunta.",
+                                        "question": "Qual destes verbos é irregular?",
+                                        "options": "Cantar,Ouvir,Levar,Falar",
+                                        "correctAnswer": "Ouvir",
+                                        "points": 30,
+                                        "ActivityTypeId": 2
+                                    }
+                                },
+                                "Atividade válida - tipo Completar Espaços": {
+                                    "value": {
+                                        "name": "Atividade C",
+                                        "title": "Complete os espaços com a conjugação dos exercícios com os verbos que acabam em -ar.",
+                                        "example": "Amar - A Mariana ama o João.",
+                                        "question": "Pensar - Eu _ muito./Falar - Tu _ Português./Morar - Eles _ em Lisboa.",
+                                        "options": "penso,pensas,pensamos/falais,falas,fala/moram,moramos,moro",
+                                        "correctAnswer": "penso/falas/moram",
+                                        "points": 30,
+                                        "ActivityTypeId": 3
+                                    }
+                                },
+                                "Atividade válida - tipo Resposta Curta": {
+                                    "value": {
+                                        "name": "Atividade D",
+                                        "title": "Escreva a resposta correta para a pergunta.",
+                                        "example": "Amar - A Mariana ama o João.",
+                                        "question": "Qual é o plural de alemão?",
+                                        "options": "Alemães,Alemões",
+                                        "correctAnswer": "Alemães",
+                                        "points": 10,
+                                        "ActivityTypeId": 4
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "updateBookModuleActivity": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Atividade"
+                            },
+                            "examples": {
+                                "Atualizar nome": {
+                                    "value": {
+                                        "name": "Conquista X"
+                                    }
+                                },
+                                "Atualizar descrição": {
+                                    "value": {
+                                        "description": "Obtem 5000 pontos"
+                                    }
+                                },
+                                "Atualizar pontos": {
+                                    "value": {
+                                        "pointsNeeded": 5000
+                                    }
+                                },
+                                "Atualizar imagem": {
+                                    "value": {
+                                        "img": "https://cdn-icons-png.flaticon.com/512/1304/1304500.png"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "userBooks": {
+                "code": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "body"
+                            },
+                            "examples": {
+                                "Adicionar livro": {
+                                    "value": {
+                                        "code": 1234
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "answers": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "body"
+                            },
+                            "examples": {
+                                "Adicionar resposta": {
+                                    "value": {
+                                        "answers": "penso/falas/moram"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "tags": [
@@ -4061,6 +4836,488 @@
                     },
                     "404": {
                         "$ref": "#/components/responses/general/404/book_module"
+                    }
+                }
+            }
+        },
+        "/books/{idBook}/modules/{idModule}/activities": {
+            "get": {
+                "summary": "Lista de atividades",
+                "description": "Devolve uma lista de atividades de acordo com o módulo do livro",
+                "operationId": "findAllBookModuleActivities",
+                "tags": [
+                    "Atividade",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idModule"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/activities/200/findAllBookModuleActivities"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idBook_idModule"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idBook_idModule"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Criar atividades",
+                "description": "Adiciona uma atividade à base de dados da aplicação",
+                "operationId": "createBookModuleActivity",
+                "tags": [
+                    "Atividade",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idModule"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/activities/createBookModuleActivity"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/activities/201/createBookModuleActivity"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/activities/400/createBookModuleActivity"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idBook_idModule"
+                    }
+                }
+            }
+        },
+        "/books/{idBook}/modules/{idModule}/activities/{idActivity}": {
+            "get": {
+                "summary": "Procurar uma atividade",
+                "description": "Devolve a informação de uma atividade pelo id",
+                "operationId": "findOneBookModuleActivity",
+                "tags": [
+                    "Atividade",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idModule"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idActivity"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/activities/200/findOneBookModuleActivity"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idBook_idModule_idActivity"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idBook_idModule_idActivity"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Atualizar a atividade",
+                "description": "Atualiza alguns campos da atividade",
+                "operationId": "updateBookModuleActivity",
+                "tags": [
+                    "Atividade",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idModule"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idActivity"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/activities/updateBookModuleActivity"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/activities/200/updateBookModuleActivity"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/activities/400/updateBookModuleActivity"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idBook_idModule_idActivity"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Apagar atividades",
+                "description": "Apaga uma atividade pelo id",
+                "operationId": "deleteBookModuleActivity",
+                "tags": [
+                    "Atividade",
+                    "Rotas Privadas - Utilizador Administrador"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idModule"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idActivity"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/activities/200/deleteBookModuleActivity"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idBook_idModule_idActivity"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idBook_idModule_idActivity"
+                    }
+                }
+            }
+        },
+        "/myBooks": {
+            "get": {
+                "summary": "Lista de livros do utilizador",
+                "description": "Devolve uma lista de livros adicionados pelo utilizador",
+                "operationId": "findAllBooksUser",
+                "tags": [
+                    "Livros do Utilizador",
+                    "Rotas Privadas - Utilizador Regular"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/bookCategory"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/userBooks/200/findAllBooks"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idCategory"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Adicionar livro",
+                "description": "Adiciona um livro à biblioteca do utilizador através do código",
+                "operationId": "createBookUser",
+                "tags": [
+                    "Livros do Utilizador",
+                    "Rotas Privadas - Utilizador Regular"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/userBooks/code"
+                },
+                "responses": {
+                    "201": {
+                        "$ref": "#/components/responses/userBooks/201/createBook"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/userBooks/400/createBook"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/userBooks/404/createBook"
+                    }
+                }
+            }
+        },
+        "/myBooks/{idBook}": {
+            "get": {
+                "summary": "Procurar um livro",
+                "description": "Devolve a informação de um livro pelo id",
+                "operationId": "findOneBookUser",
+                "tags": [
+                    "Livros do Utilizador",
+                    "Rotas Privadas - Utilizador Regular"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/userBooks/200/findOneBook"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idBook"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/userBooks/404/bookNotFound"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Atualizar o livro",
+                "description": "Atualiza o fator favorito do livro do utilizador que executar a rota",
+                "operationId": "updateBookUser",
+                "tags": [
+                    "Livros do Utilizador",
+                    "Rotas Privadas - Utilizador Regular"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/userBooks/200/updateBook"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idBook"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/userBooks/404/bookNotFound"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Apagar livros",
+                "description": "Apaga um livro da biblioteca do utilizador pelo id",
+                "operationId": "deleteBookUser",
+                "tags": [
+                    "Livros do Utilizador",
+                    "Rotas Privadas - Utilizador Regular"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/userBooks/200/deleteBook"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idBook"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/userBooks/404/bookNotFound"
+                    }
+                }
+            }
+        },
+        "/myBooks/{idBook}/modules/{idModule}/activities/{idActivity}": {
+            "get": {
+                "summary": "Procurar uma atividade",
+                "description": "Devolve a informação de uma atividade pelo id",
+                "operationId": "findOneBookModuleActivityUser",
+                "tags": [
+                    "Livros do Utilizador",
+                    "Rotas Privadas - Utilizador Regular"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idModule"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idActivity"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/userBooks/200/findOneBookModuleActivity"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/general/400/idBook_idModule_idActivity"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idBook_idModule_idActivity_user"
+                    }
+                }
+            },
+            "patch": {
+                "summary": "Atualizar a atividade",
+                "description": "Atualiza alguns campos da atividade",
+                "operationId": "updateBookModuleActivityUser",
+                "tags": [
+                    "Livros do Utilizador",
+                    "Rotas Privadas - Utilizador Regular"
+                ],
+                "security": [
+                    {
+                        "bearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/idBook"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idModule"
+                    },
+                    {
+                        "$ref": "#/components/parameters/idActivity"
+                    }
+                ],
+                "requestBody": {
+                    "$ref": "#/components/requestBodies/userBooks/answers"
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/userBooks/200/updateBookModuleActivity"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/userBooks/400/updateBookModuleActivity"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/general/401/unauthorized"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/general/403/forbidden"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/general/404/idBook_idModule_idActivity_user"
                     }
                 }
             }
