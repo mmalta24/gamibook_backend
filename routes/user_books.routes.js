@@ -111,7 +111,7 @@ router.route("/:idBook/modules/:idModule/activities/:idActivity")
         param("idBook").isNumeric().withMessage("Insira um número no id do livro!"),
         param("idModule").isNumeric().withMessage("Insira um número no id do módulo!"),
         param("idActivity").isNumeric().withMessage("Insira um número no id da atividade!"),
-        body("answers").trim().notEmpty().isString().withMessage("Insira uma resposta!")
+        body("answers").trim().notEmpty().withMessage("Insira uma resposta!")
     ],
         (req, res, next) => {
             const errors = validationResult(req);

@@ -26,8 +26,8 @@ router.use((req, res, next) => {
 router.route("/")
     .get(verifyToken, achievementsController.findAllAchievements)
     .post([
-        body("name").trim().notEmpty().isString().withMessage("Insira um nome para a conquista!"),
-        body("description").trim().notEmpty().isString().withMessage("Insira uma descrição para a conquista!"),
+        body("name").trim().notEmpty().withMessage("Insira um nome para a conquista!"),
+        body("description").trim().notEmpty().withMessage("Insira uma descrição para a conquista!"),
         body("pointsNeeded").isNumeric().withMessage("Insira o número de pontos necessários!"),
         body("img").trim().notEmpty().isURL().withMessage("Insira a imagem da consquista!")
     ], (req, res, next) => {
@@ -58,8 +58,8 @@ router.route("/:idAchievement")
         [
             param("idAchievement").isNumeric().withMessage("Insira um número no id da conquista!"),
             oneOf([
-                body("name").trim().notEmpty().isString().withMessage("Insira um nome para a conquista!"),
-                body("description").trim().notEmpty().isString().withMessage("Insira uma descrição para a conquista!"),
+                body("name").trim().notEmpty().withMessage("Insira um nome para a conquista!"),
+                body("description").trim().notEmpty().withMessage("Insira uma descrição para a conquista!"),
                 body("pointsNeeded").isNumeric().withMessage("Insira o número de pontos necessários!"),
                 body("img").trim().notEmpty().isURL().withMessage("Insira a imagem da consquista!")
             ])

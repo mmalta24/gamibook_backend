@@ -24,9 +24,9 @@ router.use((req, res, next) => {
 router.route("/")
     .get(verifyToken, usersController.findAllUsers)
     .post([
-        body("username").trim().notEmpty().isString().withMessage("Insira um username!"),
-        body("password").trim().notEmpty().isString().withMessage("Insira uma password!"),
-        body("fullName").trim().notEmpty().isString().withMessage("Insira o seu nome!"),
+        body("username").trim().notEmpty().withMessage("Insira um username!"),
+        body("password").trim().notEmpty().withMessage("Insira uma password!"),
+        body("fullName").trim().notEmpty().withMessage("Insira o seu nome!"),
         body("email").trim().notEmpty().withMessage("Insira um email!").isEmail().withMessage("Insira um email válido!"),
     ], function (req, res, next) {
         const errors = validationResult(req);
@@ -40,9 +40,9 @@ router.route("/")
     }, verifyToken, usersController.createAdminUser);
 
 router.post("/register", [
-    body("username").trim().notEmpty().isString().withMessage("Insira um username!"),
-    body("password").trim().notEmpty().isString().withMessage("Insira uma password!"),
-    body("fullName").trim().notEmpty().isString().withMessage("Insira o seu nome!"),
+    body("username").trim().notEmpty().withMessage("Insira um username!"),
+    body("password").trim().notEmpty().withMessage("Insira uma password!"),
+    body("fullName").trim().notEmpty().withMessage("Insira o seu nome!"),
     body("email").trim().notEmpty().withMessage("Insira um email!").isEmail().withMessage("Insira um email válido!"),
 ], function (req, res) {
     const errors = validationResult(req);
@@ -56,8 +56,8 @@ router.post("/register", [
 });
 
 router.post("/login", [
-    body("username").trim().notEmpty().isString().withMessage("Insira um username!"),
-    body("password").trim().notEmpty().isString().withMessage("Insira uma password!"),
+    body("username").trim().notEmpty().withMessage("Insira um username!"),
+    body("password").trim().notEmpty().withMessage("Insira uma password!"),
 ], function (req, res) {
     const errors = validationResult(req);
     if (errors.isEmpty()) {
@@ -73,8 +73,8 @@ router.route("/me")
     .get(verifyToken, usersController.getProfile)
     .patch([oneOf( // one of the following must exist
         [
-            body("password").trim().notEmpty().isString().withMessage("Insira uma password!"),
-            body("avatar").isString().withMessage("Insira um avatar!"), // it can be emppty since user can use level avatar
+            body("password").trim().notEmpty().withMessage("Insira uma password!"),
+            body("avatar").isURL().withMessage("Insira um avatar!"), // it can be emppty since user can use level avatar
         ],
     )], function (req, res, next) {
         const errors = validationResult(req);

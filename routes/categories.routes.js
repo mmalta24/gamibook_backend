@@ -26,7 +26,7 @@ router.use((req, res, next) => {
 router.route("/")
     .get(verifyToken, categoriesController.findAllCategories)
     .post(
-        [body("name").trim().notEmpty().isString().withMessage("Insira o nome da categoria!")],
+        [body("name").trim().notEmpty().withMessage("Insira o nome da categoria!")],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -41,7 +41,7 @@ router.route("/")
 router.route("/:idCategory")
     .patch([
         param("idCategory").isNumeric().withMessage("Insira um número no id da categoria!"),
-        body("name").trim().notEmpty().isString().withMessage("Insira o nome da categoria!")
+        body("name").trim().notEmpty().withMessage("Insira o nome da categoria!")
     ],
         (req, res, next) => {
             const errors = validationResult(req);

@@ -26,7 +26,7 @@ router.use((req, res, next) => {
 router.route("/")
     .get(verifyToken, activityTypesController.findAllTypes)
     .post(
-        [body("name").trim().notEmpty().isString().withMessage("Insira o nome do tipo de atividade!")],
+        [body("name").trim().notEmpty().withMessage("Insira o nome do tipo de atividade!")],
         (req, res, next) => {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -41,7 +41,7 @@ router.route("/")
 router.route("/:idType")
     .patch([
         param("idType").isNumeric().withMessage("Insira um número no id do tipo de atividade!"),
-        body("name").trim().notEmpty().isString().withMessage("Insira o nome do tipo de atividade!")
+        body("name").trim().notEmpty().withMessage("Insira o nome do tipo de atividade!")
     ],
         (req, res, next) => {
             const errors = validationResult(req);
