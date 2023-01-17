@@ -160,7 +160,26 @@ exports.updateProfile = async (req, res) => {
                     id: req.userId
                 }
             });
-        } else {
+        } else if (req.body.tickets) {
+            let user = await User.findByPk(req.userId);
+            await User.update({
+                tickets: user.tickets + req.body.tickets
+            }, {
+                where: {
+                    id: req.userId
+                }
+            });
+        } else if (req.body.points) {
+            let user = await User.findByPk(req.userId);
+            await User.update({
+                points: user.points + req.body.points
+            }, {
+                where: {
+                    id: req.userId
+                }
+            });
+        }
+        else {
             await User.update({
                 avatar: req.body.avatar
             }, {

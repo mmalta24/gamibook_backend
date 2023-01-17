@@ -1472,6 +1472,18 @@
                                     },
                                     "Falta password": {
                                         "$ref": "#/components/examples/users/missing_password"
+                                    },
+                                    "Falta bilhetes": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número de bilhetes!"
+                                        }
+                                    },
+                                    "Falta pontos": {
+                                        "value": {
+                                            "success": false,
+                                            "msg": "Insira um número de pontos!"
+                                        }
                                     }
                                 }
                             }
