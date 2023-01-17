@@ -74,7 +74,7 @@ router.route("/me")
     .patch([oneOf( // one of the following must exist
         [
             body("password").trim().notEmpty().withMessage("Insira uma password!"),
-            body("avatar").isURL().withMessage("Insira um avatar!"), // it can be emppty since user can use level avatar
+            body("avatar") // it can be emppty since user can use level avatar
         ],
     )], function (req, res, next) {
         const errors = validationResult(req);
