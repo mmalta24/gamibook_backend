@@ -58,7 +58,7 @@ exports.findAllBooks = async (req, res) => {
                 name: book.name,
                 imgBook: book.imgBook,
                 imgBackground: book.imgBackground,
-                author: book.author,
+                authors: book.authors,
                 CategoryId: book.CategoryId,
                 category: cat.name,
                 liked: book.User_Books.liked,
