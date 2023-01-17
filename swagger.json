@@ -3239,6 +3239,16 @@
                                     "value": {
                                         "password": "123"
                                     }
+                                },
+                                "Atualizar tickets": {
+                                    "value": {
+                                        "tickets": 2
+                                    }
+                                },
+                                "Atualizar pontos": {
+                                    "value": {
+                                        "points": "100"
+                                    }
                                 }
                             }
                         }

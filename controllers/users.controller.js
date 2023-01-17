@@ -171,8 +171,11 @@ exports.updateProfile = async (req, res) => {
             });
         } else if (req.body.points) {
             let user = await User.findByPk(req.userId);
+            const nextLevel = await Level.findByPk(user.LevelId + 1);
             await User.update({
-                points: user.points + req.body.points
+                totalPoints: user.points + req.body.points,
+                LevelId: nextLevel && (user.points + req.body.points) >= nextLevel.dataValues.points ?
+                    nextLevel.dataValues.id : currLevel.dataValues.id
             }, {
                 where: {
                     id: req.userId
