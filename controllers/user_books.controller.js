@@ -191,7 +191,6 @@ exports.findOneBook = async (req, res) => {
             name: bookItem.name,
             imgBook: bookItem.imgBook,
             imgBackground: bookItem.imgBackground,
-            completedPercentage: (history.length * 1) / activities.length,
             modules: modules.map(module => {
                 return {
                     ...module.dataValues,
@@ -211,9 +210,20 @@ exports.findOneBook = async (req, res) => {
             })
         };
 
+        let activitiesList = [];
+
+        for (const activity of book.modules.map(mod => mod.activities)) {
+            for (const item of activity) {
+                activitiesList.push(item)
+            }
+        }
+
         return res.status(200).json({
             success: true,
-            book
+            book: {
+                ...book,
+                completedPercentage: activitiesList.filter(act => act.completed).length / activitiesList.length
+            }
         });
     } catch (err) {
         return res.status(500).json({
