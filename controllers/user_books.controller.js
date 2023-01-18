@@ -377,7 +377,7 @@ exports.findOneBookModuleActivity = async (req, res) => {
             activity: {
                 ...activity,
                 activityType: type.name,
-                answers: history.answers
+                answers: history?.answers || ""
             }
         });
     } catch (err) {
