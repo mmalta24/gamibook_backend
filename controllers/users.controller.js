@@ -12,6 +12,7 @@ const {
 const db = require("../models");
 const User = db.users;
 const Notification = db.notifications;
+const Level = db.levels;
 
 exports.register = async (req, res) => {
     try {
@@ -172,10 +173,11 @@ exports.updateProfile = async (req, res) => {
         } else if (req.body.points) {
             let user = await User.findByPk(req.userId);
             const nextLevel = await Level.findByPk(user.LevelId + 1);
+            const newPoints = +user.dataValues.totalPoints + +req.body.points;
             await User.update({
-                totalPoints: user.points + req.body.points,
-                LevelId: nextLevel && (user.points + req.body.points) >= nextLevel.dataValues.points ?
-                    nextLevel.dataValues.id : currLevel.dataValues.id
+                totalPoints: newPoints,
+                LevelId: nextLevel && newPoints >= nextLevel.dataValues.points ?
+                    nextLevel.dataValues.id : user.dataValues.LevelId
             }, {
                 where: {
                     id: req.userId
