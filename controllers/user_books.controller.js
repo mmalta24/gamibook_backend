@@ -202,6 +202,7 @@ exports.findOneBook = async (req, res) => {
                         }) => {
                             const a = dataValues;
                             return {
+                                id: a.id,
                                 name: a.name,
                                 completed: Boolean(history.find(h => h.ActivityId === a.id && h.answers === a.correctAnswer))
                             };
