@@ -49,6 +49,11 @@
                         "default": 0,
                         "description": "Quantidade de bilhetes disponíveis para jogar na roleta que o utilizador ganha através das atividades"
                     },
+                    "totalPoints": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "description": "Quantidade de pontos totais que o utilizador obteve na realização de atividades"
+                    },
                     "lastRanking": {
                         "type": "integer",
                         "minimum": 1,
